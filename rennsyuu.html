@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>練習動画 - かまんてびーと</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffc233;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Klee One',sans-serif;
+            color: #fff8e7;
+            min-height: 100vh;
+            background: linear-gradient(180deg,#070b24,#151a55 50%,#3a1d5c);
+        }
+        .hd {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+            background: rgba(10,10,40,.88);
+            border-bottom: 1px solid rgba(255,255,255,.15);
+        }
+        .bk {
+            padding: 7px 14px;
+            background: var(--gold);
+            color: #2b1d00;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .tk {
+            background: rgba(0,0,0,.35);
+            border-radius: 14px;
+            padding: 5px 12px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .wrap {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top,0px) + 64px) 12px calc(env(safe-area-inset-bottom,0px) + 30px);
+        }
+        h1 {
+            font: 900 30px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255,194,51,.6);
+            margin: 6px 0 10px;
+        }
+        .vw {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 8px 28px rgba(0,0,0,.6),0 0 24px rgba(255,194,51,.3);
+            border: 3px solid var(--gold);
+        }
+        video {
+            display: block;
+            width: 100%;
+            max-height: 60vh;
+            background: #000;
+            transition: transform .2s;
+        }
+        video.mir {
+            transform: scaleX(-1);
+        }
+        .err {
+            display: none;
+            padding: 40px 16px;
+            text-align: center;
+            line-height: 1.8;
+        }
+        .vtabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .vt {
+            flex: 1;
+            padding: 9px 6px;
+            border-radius: 14px;
+            border: 2px solid #fff;
+            background: transparent;
+            color: #fff;
+            font: 600 15px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .vt.on {
+            background: var(--gold);
+            color: #2b1d00;
+            border-color: var(--gold);
+        }
+        .ctl {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .cb {
+            padding: 12px 4px;
+            border-radius: 16px;
+            border: 2px solid rgba(255,255,255,.4);
+            background: rgba(255,255,255,.1);
+            color: #fff;
+            font: 600 16px 'Klee One',sans-serif;
+            cursor: pointer;
+            line-height: 1.3;
+        }
+        .cb small {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            opacity: .85;
+        }
+        .cb:active {
+            background: rgba(255,194,51,.4);
+            transform: scale(.97);
+        }
+        .cb.on {
+            background: var(--gold);
+            color: #2b1d00;
+            border-color: var(--gold);
+        }
+        .sec {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 16px 4px 6px;
+            color: var(--gold);
+        }
+        .spd {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 8px;
+        }
+        .card {
+            background: rgba(255,255,255,.1);
+            border: 2px solid rgba(255,255,255,.25);
+            border-radius: 18px;
+            padding: 12px 14px;
+            margin-top: 14px;
+        }
+        .pbar {
+            height: 14px;
+            border-radius: 7px;
+            background: rgba(255,255,255,.2);
+            overflow: hidden;
+            margin: 6px 0;
+        }
+        .pbar i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg,#ffc233,#ff7043);
+            transition: width .5s;
+        }
+        .days {
+            display: flex;
+            gap: 6px;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+        .dy {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            border-radius: 12px;
+            padding: 6px 0;
+            background: rgba(255,255,255,.08);
+            border: 2px solid rgba(255,255,255,.2);
+        }
+        .dy.ok {
+            background: rgba(255,194,51,.28);
+            border-color: var(--gold);
+        }
+        .dy.td {
+            outline: 2px solid #fff;
+        }
+        .tip {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #c8e6c9;
+        }
+        .go {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 24px;
+            background: linear-gradient(135deg,#ff8a65,#e53935);
+            color: #fff;
+            text-decoration: none;
+            font: 600 20px 'Klee One',sans-serif;
+            box-shadow: 0 5px 0 #8e1a1a;
+        }
+        .toast {
+            position: fixed;
+            left: 50%;
+            top: 80px;
+            transform: translateX(-50%);
+            z-index: 300;
+            background: rgba(0,0,0,.9);
+            border: 2px solid var(--gold);
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            animation: tst 2.6s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes tst {
+            0% {
+                opacity: 0;
+                transform: translate(-50%,-10px);
+            }
+            10%,85% {
+                opacity: 1;
+                transform: translate(-50%,0);
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        .conf {
+            position: fixed;
+            top: -40px;
+            font-size: 28px;
+            animation: fall linear forwards;
+            pointer-events: none;
+            z-index: 500;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+        body {
+            background-attachment: fixed;
+        }
+        .hd {
+            backdrop-filter: blur(8px);
+        }
+        /*device-fix*/
+        button,a {
+            touch-action: manipulation;
+        }
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        @supports (-webkit-touch-callout:none) {
+            * {
+                -webkit-backdrop-filter: none!important;
+                backdrop-filter: none!important;
+            }
+            body {
+                background-attachment: scroll!important;
+            }
+        }
+        /*tablet*/
+        @media(min-width:768px) {
+            .wrap {
+                zoom: 1.25;
+            }
+            .hd {
+                zoom: 1.1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hd">
+        <a class="bk" href="index.html">🏠 ホーム</a>
+        <div class="tk">🎫 <span id="tkn">0</span></div>
+    </div>
+    <div class="wrap" id="wrap">
+        <h1>🎬 練習動画</h1>
+        <div class="vtabs" id="vtabs"></div>
+        <div class="vw">
+            <video id="v" controls playsinline preload="metadata"></video>
+            <div class="err" id="err">🎬 動画がまだ見つかりません。<br><small>動画ファイル(<span id="errn">video.mp4</span>)を、このページと同じフォルダに置いてね。</small></div>
+        </div>
+        <div class="ctl">
+            <button class="cb" id="back">⏪<small>10秒もどる</small></button>
+            <button class="cb" id="play">▶<small>さいせい / とめる</small></button>
+            <button class="cb" id="fwd">⏩<small>10秒すすむ</small></button>
+        </div>
+        <div class="sec">🐢 はやさ</div>
+        <div class="spd">
+            <button class="cb" data-s="0.5">ゆっくり<small>×0.5</small></button>
+            <button class="cb" data-s="0.75">ちょっとゆっくり<small>×0.75</small></button>
+            <button class="cb" data-s="1">ふつう<small>×1</small></button>
+        </div>
+        <div class="sec">🔧 れんしゅうのコツ</div>
+        <div class="ctl">
+            <button class="cb" id="mir">🪞<small>左右はんてん<br>(鏡のように まねる)</small></button>
+            <button class="cb" id="loop">🔁<small>くりかえし</small></button>
+            <button class="cb" id="full">⛶<small>ぜんがめん</small></button>
+        </div>
+        <div class="ctl">
+            <button class="cb" id="pa">📍<small>ここから</small></button>
+            <button class="cb" id="pb">🏁<small>ここまで</small></button>
+            <button class="cb" id="pc">✖<small>くべつ解除</small></button>
+        </div>
+        <div class="tip" id="ab" style="margin-top:6px;min-height:22px"></div>
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;font-weight:600">
+                <span>📅 きょうの練習</span>
+                <span><b id="tdt">0:00</b> / 1:00</span>
+            </div>
+            <div class="pbar"><i id="tdb"></i></div>
+            <div class="tip" id="tdm">1分見ると、🎫チケット 3まい もらえるよ！</div>
+            <div class="days" id="days"></div>
+            <div class="tip" style="margin-top:8px">れんぞく <b id="stk">0</b>日 ・ ぜんぶで <b id="allt">0</b>分</div>
+        </div>
+        <div class="card tip">💡 <b>まねするときのコツ</b><br>① まず「ゆっくり」で、手の動きをよく見よう<br>② 「左右はんてん」にすると、鏡を見るように まねしやすいよ<br>③ むずかしいところは「ここから・ここまで」で くりかえそう<br>④ 慣れたら「ふつう」で、音楽に合わせてみよう！</div>
+        <a class="go" href="game.html">🥁 練習したら、かまんてリズムであそぼう！</a>
+    </div>
+    <script>
+        const VIDEOS = [{t: 'ぜんたい', src: 'video.mp4'}]; // 動画が増えたら、ここに {t:'名前',src:'ファイル名.mp4'} を足してください
+        const $ = id => document.getElementById(id);
+        const J = (k, d) => {
+            try {
+                return JSON.parse(localStorage.getItem(k)) || d
+            } catch (e) {
+                return d
+            }
+        };
+        const v = $('v');
+        let cur = 0, A = null, B = null, watch = 0, lastT = null, rewarded = false;
+        const GOAL = 60, TKT = 3;
+        const todayStr = () => {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')
+        };
+        const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+
+        function toast(t) {
+            const e = document.createElement('div');
+            e.className = 'toast';
+            e.innerHTML = t;
+            document.body.appendChild(e);
+            setTimeout(() => e.remove(), 2700)
+        }
+
+        function confetti(n = 30) {
+            const em = ['🎊', '⭐', '🏮', '✨'];
+            for (let i = 0; i < n; i++) {
+                const e = document.createElement('div');
+                e.className = 'conf';
+                e.textContent = em[i % 4];
+                e.style.left = Math.random() * 100 + 'vw';
+                e.style.animationDuration = (2 + Math.random() * 2) + 's';
+                e.style.animationDelay = Math.random() * .8 + 's';
+                document.body.appendChild(e);
+                setTimeout(() => e.remove(), 5000)
+            }
+        }
+        // ---- 動画の切り替え ----
+
+        function load(i) {
+            cur = i;
+            A = B = null;
+            showAB();
+            const V = VIDEOS[i];
+            $('errn').textContent = V.src;
+            $('err').style.display = 'none';
+            v.style.display = 'block';
+            v.src = V.src;
+            document.querySelectorAll('.vt').forEach((b, k) => b.classList.toggle('on', k === i));
+            const pos = J('kamantePracticePos', {});
+            v.addEventListener('loadedmetadata', () => {
+                if (pos[V.src] && pos[V.src] < v.duration - 3)v.currentTime = pos[V.src]
+                }, {once: true})
+        }
+        $('vtabs').innerHTML = VIDEOS.length > 1 ? VIDEOS.map((V, i) => `<button class="vt" data-i="${i}">${V.t}</button>`).join('') : '';
+        document.querySelectorAll('.vt').forEach(b => b.onclick = () => load(+b.dataset.i));
+        v.addEventListener('error', () => {
+            v.style.display = 'none';
+            $('err').style.display = 'block'
+            });
+        // ---- 操作ボタン ----
+        $('play').onclick = () => v.paused ? v.play() : v.pause();
+        v.addEventListener('play', () => $('play').firstChild.textContent = '⏸');
+        v.addEventListener('pause', () => $('play').firstChild.textContent = '▶');
+        $('back').onclick = () => {
+            v.currentTime = Math.max(0, v.currentTime - 10)
+        };
+        $('fwd').onclick = () => {
+            v.currentTime = Math.min(v.duration || 1e9, v.currentTime + 10)
+        };
+        let spd = J('kamantePracticeSpd', 1);
+
+        function setSpd(s) {
+            spd = s;
+            v.playbackRate = s;
+            localStorage.setItem('kamantePracticeSpd', JSON.stringify(s));
+            document.querySelectorAll('[data-s]').forEach(b => b.classList.toggle('on', +b.dataset.s === s))
+        }
+        document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => setSpd(+b.dataset.s));
+        v.addEventListener('loadedmetadata', () => v.playbackRate = spd);
+        $('mir').onclick = () => {
+            v.classList.toggle('mir');
+            $('mir').classList.toggle('on', v.classList.contains('mir'))
+        };
+        $('loop').onclick = () => {
+            v.loop = !v.loop;
+            $('loop').classList.toggle('on', v.loop)
+        };
+        $('full').onclick = () => {
+            const f = v.requestFullscreen || v.webkitRequestFullscreen || v.webkitEnterFullscreen;
+            if (f)f.call(v)
+        };
+
+        function showAB() {
+            $('ab').textContent = A != null ? (B != null ? `🔁 ${fmt(A)} 〜 ${fmt(B)} を くりかえし中` : `📍 ${fmt(A)} から。つぎに「ここまで」をおしてね`) : '';
+            $('pa').classList.toggle('on', A != null);
+            $('pb').classList.toggle('on', B != null)
+        }
+        $('pa').onclick = () => {
+            A = v.currentTime;
+            if (B != null && B <= A)B = null;
+            showAB()
+        };
+        $('pb').onclick = () => {
+            if (A == null) {
+                toast('先に「ここから」をおしてね');
+                return
+            }
+            if (v.currentTime <= A) {
+                toast('「ここから」より あとで おしてね');
+                return
+            }
+            B = v.currentTime;
+            showAB();
+            v.currentTime = A;
+            v.play()
+        };
+        $('pc').onclick = () => {
+            A = B = null;
+            showAB()
+        };
+        v.addEventListener('timeupdate', () => {
+            if (A != null && B != null && v.currentTime >= B) {
+                v.currentTime = A
+            }
+            const pos = J('kamantePracticePos', {});
+            pos[VIDEOS[cur].src] = v.currentTime;
+            localStorage.setItem('kamantePracticePos', JSON.stringify(pos))
+            });
+        // ---- きょうの練習 ----
+
+        function pdata() {
+            return J('kamantePractice', {days: [], secs: {}, rewarded: [], total: 0})
+        }
+
+        function render() {
+            const d = pdata(), t = todayStr(), s = Math.min(GOAL, Math.floor(d.secs[t] || 0));
+            $('tdt').textContent = fmt(s);
+            $('tdb').style.width = s / GOAL * 100 + '%';
+            rewarded = d.rewarded.includes(t);
+            $('tdm').textContent = rewarded ? '✅ きょうの練習は おわり！ おつかれさま！' : '1分見ると、🎫チケット ' + TKT + 'まい もらえるよ！';
+            $('tkn').textContent = parseInt(localStorage.getItem('ticketCount')) || 0;
+            // 7日のスタンプ
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const x = new Date();
+                x.setDate(x.getDate() - i);
+                days.push(x)
+            }
+            const key = x => x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
+            $('days').innerHTML = days.map((x, i) => {
+                const k = key(x), ok = d.rewarded.includes(k);
+                return `<div class="dy ${ok ? 'ok' : ''} ${i === 6 ? 'td' : ''}">${['日', '月', '火', '水', '木', '金', '土'][x.getDay()]}<br>${ok ? '✅' : '・'}</div>`
+                }).join('');
+            let st = 0;
+            for (let i = rewarded ? 0 : 1; i < 400; i++) {
+                const x = new Date();
+                x.setDate(x.getDate() - i);
+                if (d.rewarded.includes(key(x)))st++; else break
+            }
+            $('stk').textContent = st;
+            $('allt').textContent = Math.floor((d.total || 0) / 60)
+        }
+
+        function tick() {
+            if (!v.paused && !v.ended && v.readyState > 2) {
+                const now = performance.now();
+                if (lastT != null) {
+                    const dt = Math.min(1.5, (now - lastT) / 1000);
+                    const d = pdata(), t = todayStr();
+                    d.secs[t] = (d.secs[t] || 0) + dt;
+                    d.total = (d.total || 0) + dt;
+                    if (!d.rewarded.includes(t) && d.secs[t] >= GOAL) {
+                        d.rewarded.push(t);
+                        localStorage.setItem('ticketCount', (parseInt(localStorage.getItem('ticketCount')) || 0) + TKT);
+                        toast('🎉 きょうの練習 クリア！<br>🎫 ' + TKT + 'まい ゲット！');
+                        confetti(30);
+                        if (navigator.vibrate)navigator.vibrate([40, 30, 80])
+                    }
+                    localStorage.setItem('kamantePractice', JSON.stringify(d));
+                    render()
+                }
+                lastT = now
+            } else lastT = null
+        }
+        setInterval(tick, 1000);
+        // 文字の大きさ(ホームの設定と共通)
+        $('wrap').style.zoom = J('kamanteSettings', {}).ts || 1;
+        load(0);
+        setSpd(spd);
+        render();
+    </script>
+</body>
+</html>

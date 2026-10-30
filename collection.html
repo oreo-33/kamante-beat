@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>おたから図鑑 - かまんてびーと</title>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffc233;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Klee One',sans-serif;
+            color: #fff8e7;
+            min-height: 100vh;
+            background: linear-gradient(180deg,#070b24,#151a55 50%,#3a1d5c);
+        }
+        .hd {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+            background: rgba(10,10,40,.85);
+            border-bottom: 1px solid rgba(255,255,255,.15);
+        }
+        .bk {
+            padding: 7px 12px;
+            background: var(--gold);
+            color: #2b1d00;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .tk {
+            background: rgba(0,0,0,.35);
+            border-radius: 14px;
+            padding: 5px 12px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .wrap {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top,0px) + 62px) 12px 90px;
+        }
+        h1 {
+            font: 900 30px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255,194,51,.6);
+            margin: 6px 0 10px;
+        }
+        .prog {
+            background: rgba(255,255,255,.1);
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .pbar {
+            height: 14px;
+            border-radius: 7px;
+            background: rgba(255,255,255,.2);
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .pbar i {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg,#ffc233,#ff7043);
+            transition: width .6s;
+        }
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px 4px;
+            border-radius: 16px;
+            border: 2px solid #fff;
+            background: transparent;
+            color: #fff;
+            font: 600 15px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .tab.on {
+            background: var(--gold);
+            color: #2b1d00;
+            border-color: var(--gold);
+        }
+        .pane {
+            display: none;
+        }
+        .pane.on {
+            display: block;
+        }
+        .chips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .chip {
+            padding: 6px 12px;
+            border-radius: 14px;
+            border: 2px solid rgba(255,255,255,.5);
+            background: transparent;
+            color: #fff;
+            font: 600 13px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .chip.on {
+            background: #fff;
+            color: #2b1d3a;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 10px;
+        }
+        @media(min-width:520px) {
+            .grid {
+                grid-template-columns: repeat(4,1fr);
+            }
+        }
+        .it {
+            position: relative;
+            border-radius: 16px;
+            padding: 10px 4px 8px;
+            text-align: center;
+            background: rgba(255,255,255,.1);
+            border: 3px solid var(--rc);
+            cursor: pointer;
+            transition: transform .15s;
+        }
+        .it:active {
+            transform: scale(.95);
+        }
+        .it .e {
+            font-size: 42px;
+            line-height: 1.2;
+        }
+        .ico {
+            width: 66px;
+            height: 66px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+        .mc .ico {
+            width: 130px;
+            height: 130px;
+        }
+        .it.no .ico,.ico.sil {
+            filter: brightness(0);
+            opacity: .35;
+        }
+        .it .n {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .it .s {
+            font-size: 11px;
+            color: var(--rc);
+        }
+        .it .c {
+            position: absolute;
+            top: -8px;
+            right: -4px;
+            background: #e63946;
+            border-radius: 10px;
+            font-size: 12px;
+            padding: 1px 7px;
+            font-weight: 600;
+        }
+        .it.no {
+            border-color: rgba(255,255,255,.2);
+            background: rgba(0,0,0,.25);
+        }
+        .it.no .e {
+            filter: grayscale(1) brightness(0);
+            opacity: .5;
+        }
+        .it.no .n,.it.no .s {
+            opacity: .5;
+        }
+        .md {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0,0,0,.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .md.on {
+            display: flex;
+        }
+        .mc {
+            width: min(92vw,380px);
+            max-height: 90vh;
+            overflow: auto;
+            background: linear-gradient(160deg,#fffdf5,#ffe9b8);
+            color: #3a2410;
+            border: 6px solid var(--rc);
+            border-radius: 24px;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 0 36px var(--rc);
+            animation: cin .35s cubic-bezier(.2,1.4,.4,1);
+        }
+        @keyframes cin {
+            from {
+                transform: scale(.5);
+                opacity: 0;
+            }
+        }
+        .mc .em {
+            font-size: 90px;
+            line-height: 1.15;
+        }
+        .mc .nm {
+            font: 900 26px 'Zen Antique Soft',serif;
+        }
+        .mc .rn {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6a4a2a;
+            margin: 2px 0 8px;
+        }
+        .mc .tr {
+            font-size: 14px;
+            line-height: 1.7;
+            text-align: left;
+            background: rgba(255,255,255,.6);
+            border-radius: 14px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .mc .own {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .act {
+            background: rgba(0,0,0,.06);
+            border-radius: 14px;
+            padding: 10px;
+            margin-top: 8px;
+            text-align: left;
+        }
+        .act b {
+            font-size: 14px;
+        }
+        .act small {
+            display: block;
+            font-size: 12px;
+            color: #6a4a2a;
+            margin: 2px 0 6px;
+        }
+        .ab {
+            display: flex;
+            gap: 6px;
+        }
+        .ab button {
+            flex: 1;
+            padding: 9px 4px;
+            border: 0;
+            border-radius: 12px;
+            font: 600 14px 'Klee One',sans-serif;
+            color: #fff;
+            background: #e65100;
+            cursor: pointer;
+        }
+        .ab button.t {
+            background: #2e7d32;
+        }
+        .ab button:disabled {
+            opacity: .4;
+        }
+        .cl {
+            width: 100%;
+            margin-top: 12px;
+            padding: 11px;
+            border: 0;
+            border-radius: 14px;
+            background: #5d4037;
+            color: #fff;
+            font: 600 16px 'Klee One',sans-serif;
+        }
+        .rw {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: rgba(255,255,255,.1);
+            border: 2px solid rgba(255,255,255,.25);
+            border-radius: 16px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+        .rw.ok {
+            border-color: var(--gold);
+            box-shadow: 0 0 14px rgba(255,194,51,.6);
+        }
+        .rw .d {
+            font-size: 13px;
+            opacity: .85;
+        }
+        .rb {
+            padding: 8px 14px;
+            border: 0;
+            border-radius: 14px;
+            background: var(--gold);
+            color: #2b1d00;
+            font: 600 15px 'Klee One',sans-serif;
+            white-space: nowrap;
+        }
+        .rb:disabled {
+            background: rgba(255,255,255,.2);
+            color: #ddd;
+        }
+        .rb.pul {
+            animation: pl 1s infinite;
+        }
+        @keyframes pl {
+            50% {
+                box-shadow: 0 0 24px rgba(255,194,51,.95);
+            }
+        }
+        .tl {
+            background: rgba(255,255,255,.1);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+        .tl .h {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .tl .tn {
+            font: 900 18px 'Zen Antique Soft',serif;
+        }
+        .tl .td {
+            font-size: 13px;
+            opacity: .85;
+            margin: 4px 0;
+        }
+        .tl button {
+            margin-top: 6px;
+            padding: 7px 16px;
+            border: 0;
+            border-radius: 16px;
+            background: var(--gold);
+            color: #2b1d00;
+            font: 600 14px 'Klee One',sans-serif;
+        }
+        .tl button.u {
+            background: #e57373;
+            color: #fff;
+        }
+        .eq {
+            background: #2e7d32;
+            border-radius: 12px;
+            padding: 2px 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .empty {
+            text-align: center;
+            padding: 40px 10px;
+            line-height: 1.8;
+        }
+        .gl {
+            position: fixed;
+            right: 16px;
+            bottom: calc(env(safe-area-inset-bottom,0px) + 16px);
+            z-index: 60;
+            padding: 14px 20px;
+            border-radius: 30px;
+            background: linear-gradient(135deg,#ff8a65,#e53935);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 17px;
+            box-shadow: 0 6px 0 #8e1a1a,0 10px 20px rgba(0,0,0,.4);
+        }
+        .toast {
+            position: fixed;
+            left: 50%;
+            top: 70px;
+            transform: translateX(-50%);
+            z-index: 300;
+            background: rgba(0,0,0,.88);
+            border: 2px solid var(--gold);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 15px;
+            text-align: center;
+            animation: tst 2.2s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes tst {
+            0% {
+                opacity: 0;
+                transform: translate(-50%,-10px);
+            }
+            10%,85% {
+                opacity: 1;
+                transform: translate(-50%,0);
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        .conf {
+            position: fixed;
+            top: -40px;
+            font-size: 28px;
+            animation: fall linear forwards;
+            pointer-events: none;
+            z-index: 500;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+        body {
+            background-attachment: fixed;
+        }
+        .hd {
+            backdrop-filter: blur(8px);
+        }
+        /*device-fix*/
+        button,a {
+            touch-action: manipulation;
+        }
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        @supports (-webkit-touch-callout:none) {
+            * {
+                -webkit-backdrop-filter: none!important;
+                backdrop-filter: none!important;
+            }
+            body {
+                background-attachment: scroll!important;
+            }
+        }
+        /*tablet*/
+        @media(min-width:768px) {
+            .wrap {
+                zoom: 1.2;
+            }
+            .hd {
+                zoom: 1.1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hd">
+        <a class="bk" href="index.html">🏠 ホーム</a>
+        <div class="tk">🎫 <span id="tkn">0</span></div>
+    </div>
+    <div class="wrap">
+        <h1>📚 おたから図鑑</h1>
+        <div class="prog">
+            図鑑 <span id="pc">0</span> / <span id="pn">0</span>
+            <div class="pbar"><i id="pf" style="width:0"></i></div>
+        </div>
+        <div class="tabs">
+            <button class="tab on" data-p="0">📖 ずかん</button>
+            <button class="tab" data-p="1">🎁 ほうび <span id="badge"></span></button>
+            <button class="tab" data-p="2">👑 しょうごう</button>
+        </div>
+        <div class="pane on" id="p0">
+            <div class="chips" id="chips"></div>
+            <div class="grid" id="grid"></div>
+        </div>
+        <div class="pane" id="p1">
+            <div id="rwList"></div>
+        </div>
+        <div class="pane" id="p2">
+            <div id="tlist"></div>
+            <div class="empty" id="tempty" style="display:none">👑 まだ称号がありません<br>図鑑をそろえたり、ミッションをクリアしてゲットしよう！</div>
+        </div>
+    </div>
+    <a class="gl" href="gacha.html">🥁 福引へ</a>
+    <div class="md" id="md">
+        <div class="mc" id="mc"></div>
+    </div>
+    <script>
+        const RAR = {
+            1: {n: 'ふつう', c: '#cfd8dc', s: '★'},
+            2: {n: 'めずらしい', c: '#81c784', s: '★★'},
+            3: {n: 'レア', c: '#64b5f6', s: '★★★'},
+            4: {n: 'スーパーレア', c: '#ba68c8', s: '★★★★'},
+            5: {n: 'ウルトラレア', c: '#ff8a65', s: '★★★★★'},
+            6: {n: 'レジェンド', c: '#ffd54f', s: '👑'},
+            7: {n: 'シークレット', c: '#ff80ff', s: '🌈'}
+        };
+        const CATS = {d: '踊りの道具', m: '祭りの小物', g: '鹿児島グルメ', p: '名所・工芸'};
+        const ITEMS = [
+            {id: 'm_lantern', e: '🏮', n: 'ちょうちん', r: 1, c: 'm', t: 'ちょうちんは、あかりで夜のお祭りをはなやかにしてくれます。'},
+            {id: 'm_fuurin', e: '🎐', n: 'ふうりん', r: 1, c: 'm', t: 'ふうりんは、風がふくと涼しい音がなる、夏のかざりです。'},
+            {id: 'm_ramune', e: '🥤', n: 'ラムネ', r: 1, c: 'm', t: 'ラムネは、ビー玉でふたをした、お祭りの定番の飲み物です。'},
+            {id: 'm_candy', e: '🍭', n: 'わたあめ', r: 1, c: 'm', t: 'わたあめは、お砂糖をふわふわにした、お祭りのおかしです。'},
+            {id: 'm_dango', e: '🍡', n: 'おだんご', r: 1, c: 'm', t: 'おだんごは、お祭りやお祝いで食べられてきた和菓子です。'},
+            {id: 'm_balloon', e: '🎈', n: 'ふうせん', r: 1, c: 'm', t: 'ふうせんは、お祭りの屋台でもらえる、ワクワクのおみやげです。'},
+            {id: 'g_imo', e: '🍠', n: 'さつまいも', r: 1, c: 'g', t: '鹿児島県は、さつまいもの産地として日本一で有名です。'},
+            {id: 'g_kibinago', e: '🐟', n: 'きびなご', r: 1, c: 'g', t: 'きびなごは、鹿児島の人気のさかな。小さくて、お刺身や天ぷらで食べます。'},
+            {id: 'm_taiko', e: '🥁', n: 'たいこ', r: 2, c: 'm', t: 'たいこの音は、踊りやお祭りを盛り上げてくれます。'},
+            {id: 'm_fue', e: '🎵', n: 'ふえ', r: 2, c: 'm', t: 'ふえの音色は、お祭りの雰囲気をぐっと高めてくれます。'},
+            {id: 'm_mask', e: '🎭', n: 'おめん', r: 2, c: 'm', t: 'おめんは、お祭りの屋台でも人気のおみやげです。'},
+            {id: 'g_satsumaage', e: '🍢', n: 'さつまあげ', r: 2, c: 'g', t: 'さつまあげは、鹿児島では「つけあげ」とも呼ばれています。'},
+            {id: 'g_cha', e: '🍵', n: 'おちゃ', r: 2, c: 'g', t: '鹿児島は、お茶の産地としても有名です。'},
+            {id: 'g_keihan', e: '🍚', n: 'けいはん', r: 2, c: 'g', t: '鶏飯(けいはん)は、奄美大島などに伝わる、ごはんにスープをかけて食べる郷土料理です。'},
+            {id: 'g_kurobuta', e: '🐖', n: 'くろぶた', r: 3, c: 'g', t: '鹿児島の黒豚は、全国的に有名なブランド豚です。'},
+            {id: 'g_shirokuma', e: '🍧', n: 'しろくま', r: 3, c: 'g', t: '白くまは、鹿児島発祥として知られるかき氷。練乳とフルーツがのっています。'},
+            {id: 'g_karukan', e: '🍰', n: 'かるかん', r: 3, c: 'g', t: 'かるかんは、山芋を使った鹿児島の代表的な和菓子です。'},
+            {id: 'g_daikon', e: '🥕', n: 'さくらじまだいこん', r: 3, c: 'g', t: '桜島大根は、世界一大きい大根としても知られています。'},
+            {id: 'p_sakurajima', e: '🌋', n: 'さくらじま', r: 3, c: 'p', t: '桜島は、鹿児島のシンボルの、今も活動している火山です。'},
+            {id: 'd_kama', e: '🌾', n: 'かま', r: 4, c: 'd', t: 'かまんて踊りで使う「鎌」。踊り手は、鎌と棒を打ち合わせて踊ります。'},
+            {id: 'd_bou', e: '🪵', n: 'ぼう', r: 4, c: 'd', t: '玉利の鎌手踊りは、鎌の6人と棒の6人で踊ります。歌に合わせて、はげしく打ち合うのが見どころ！'},
+            {id: 'd_tabi', e: '🧦', n: 'たび', r: 4, c: 'd', t: '足袋は、日本の伝統的な履き物。踊りの足元をきりっと見せてくれます。'},
+            {id: 'd_isho', e: '👘', n: 'いしょう', r: 5, c: 'd', t: '踊りの衣装は、見る人も、踊る人も、気持ちを高めてくれます。'},
+            {id: 'd_hachimaki', e: '🪢', n: 'はちまき', r: 5, c: 'd', t: 'はちまきは、気合いを入れるときに頭に巻く布です。'},
+            {id: 'd_kote', e: '🧤', n: 'こて', r: 5, c: 'd', t: 'こて(手甲)は、手の甲を守る、昔ながらの道具です。'},
+            {id: 'p_kiriko', e: '💠', n: 'さつまきりこ', r: 5, c: 'p', t: '薩摩切子は、鹿児島の伝統工芸の、美しいガラス細工です。'}
+        ];
+        const itemById = Object.fromEntries(ITEMS.map(i => [i.id, i]));
+        const J = (k, d) => {
+            try {
+                return JSON.parse(localStorage.getItem(k)) || d
+            } catch (e) {
+                return d
+            }
+        };
+        const $ = id => document.getElementById(id), rnd = (a, b) => a + Math.random() * (b - a);
+        // 古い景品(文房具など)は、チケットに交換して図鑑を新しくする
+
+        function migrateOld() {
+            if (localStorage.getItem('takaraMigrated'))return 0;
+            const col = J('collection', []), keep = [];
+            let refund = 0;
+            col.forEach(it => {
+                if (it.tk || it.isCharacter)keep.push(it); else refund += [0, 1, 2, 5, 10, 30, 100][it.rarity] || 1
+                });
+            localStorage.setItem('collection', JSON.stringify(keep));
+            if (refund)localStorage.setItem('ticketCount', (parseInt(localStorage.getItem('ticketCount')) || 0) + refund);
+            localStorage.setItem('takaraMigrated', '1');
+            return refund;
+        }
+        const ownedMap = () => {
+            const m = {};
+            J('collection', []).forEach(x => {
+                if (x.tk)m[x.itemId] = (m[x.itemId] || 0) + 1
+                });
+            return m
+        };
+        const CSS_COMMON = 1;
+
+        const ico = (i, cls = '') => `<img class="ico ${cls}" src="illust/items/${i.id}.svg" alt="" onerror="this.outerHTML='<div class=&quot;e&quot;>${i.e}</div>'">`;
+        let cat = 'all', selChar = null;
+        const EXP = {1: 20, 2: 50, 3: 120, 4: 300, 5: 800}, TKT = {1: 1, 2: 2, 3: 5, 4: 10, 5: 25};
+        const tickets = () => parseInt(localStorage.getItem('ticketCount')) || 0;
+        const addTk = n => localStorage.setItem('ticketCount', tickets() + n);
+
+        function toast(t) {
+            const e = document.createElement('div');
+            e.className = 'toast';
+            e.textContent = t;
+            document.body.appendChild(e);
+            setTimeout(() => e.remove(), 2300)
+        }
+
+        function confetti(n = 30) {
+            const em = ['🎊', '⭐', '🏮', '✨', '🌸'];
+            for (let i = 0; i < n; i++) {
+                const e = document.createElement('div');
+                e.className = 'conf';
+                e.textContent = em[i % 5];
+                e.style.left = rnd(0, 100) + 'vw';
+                e.style.animationDuration = rnd(2, 4) + 's';
+                e.style.animationDelay = rnd(0, .8) + 's';
+                document.body.appendChild(e);
+                setTimeout(() => e.remove(), 5000)
+            }
+        }
+        const vib = n => navigator.vibrate && navigator.vibrate(n);
+        // タブ
+        document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
+            document.querySelectorAll('.pane').forEach((p, i) => p.classList.toggle('on', i == b.dataset.p));
+            render()
+            });
+        // 図鑑
+
+        function renderGrid() {
+            const o = ownedMap();
+            $('chips').innerHTML = [['all', 'すべて'], ...Object.entries(CATS)].map(([k, v]) => `<button class="chip ${k === cat ? 'on' : ''}" data-c="${k}">${v}</button>`).join('');
+            document.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+                cat = b.dataset.c;
+                renderGrid()
+                });
+            const L = ITEMS.filter(i => cat === 'all' || i.c === cat).sort((a, b) => b.r - a.r);
+            $('grid').innerHTML = L.map(i => {
+                const n = o[i.id] || 0;
+                return `<div class="it ${n ? '' : 'no'}" style="--rc:${RAR[i.r].c}" data-i="${i.id}">${n > 1 ? `<span class="c">×${n}</span>` : ''}${ico(i)}<div class="n">${n ? i.n : '？？？'}</div><div class="s">${RAR[i.r].s}</div></div>`
+                }).join('');
+            document.querySelectorAll('.it').forEach(e => e.onclick = () => openItem(e.dataset.i));
+            const have = Object.keys(o).length;
+            $('pc').textContent = have;
+            $('pn').textContent = ITEMS.length;
+            $('pf').style.width = have / ITEMS.length * 100 + '%';
+        }
+
+        function curChar() {
+            const cs = J('characters', []), id = parseInt(localStorage.getItem('selectedCharacterId')) || 1;
+            return cs.find(c => c.id === id) || cs[0] || null
+        }
+
+        function openItem(id) {
+            const i = itemById[id], n = ownedMap()[id] || 0, R = RAR[i.r], ch = curChar();
+            $('mc').style.setProperty('--rc', R.c);
+            document.getElementById('md').style.setProperty('--rc', R.c);
+            if (!n) {
+                $('mc').innerHTML = `${ico(i, 'sil')}<div class="nm">？？？</div><div class="rn">${R.s} ${R.n} ・ ${CATS[i.c]}</div><div class="tr">まだ見つけていないおたからです。ふくびきで当てよう！</div><button class="cl" onclick="closeM()">とじる</button>`
+            }
+            else {
+                const sp = n - 1;
+                $('mc').innerHTML = `${ico(i)}<div class="nm">${i.n}</div><div class="rn">${R.s} ${R.n} ・ ${CATS[i.c]}</div><div class="tr">💡 ${i.t}</div><div class="own">もっている数: ${n}こ</div>
+    <div class="act"><b>🙏 ほうのう (キャラの経験値)</b><small>${ch ? ch.name + ' に' : 'キャラがいません'} 1こにつき ⭐${EXP[i.r]} ・ 1こは図鑑にのこるよ</small><div class="ab"><button ${sp < 1 ? 'disabled' : ''} onclick="offer('${id}',1)">1こ</button><button ${sp < 1 ? 'disabled' : ''} onclick="offer('${id}',${sp})">ぜんぶ(${sp}こ)</button></div></div>
+    <div class="act"><b>🎫 チケットにこうかん</b><small>1こにつき 🎫${TKT[i.r]}まい ・ 1こは図鑑にのこるよ</small><div class="ab"><button class="t" ${sp < 1 ? 'disabled' : ''} onclick="exch('${id}',1)">1こ</button><button class="t" ${sp < 1 ? 'disabled' : ''} onclick="exch('${id}',${sp})">ぜんぶ(${sp}こ)</button></div></div>
+    <button class="cl" onclick="closeM()">とじる</button>`
+            }
+            $('md').classList.add('on');
+        }
+
+        function closeM() {
+            $('md').classList.remove('on')
+        }
+        $('md').onclick = e => {
+            if (e.target === $('md'))closeM()
+        };
+
+        function removeItems(id, k) {
+            let r = 0;
+            const col = J('collection', []).filter(x => {
+                if (x.tk && x.itemId === id && r < k) {
+                    r++;
+                    return false
+                }
+                return true
+                });
+            localStorage.setItem('collection', JSON.stringify(col));
+            return r
+        }
+
+        function offer(id, k) {
+            const i = itemById[id], ch = curChar();
+            if (!ch) {
+                toast('キャラがいません');
+                return
+            }
+            const n = ownedMap()[id] || 0;
+            k = Math.min(k, n - 1);
+            if (k < 1)return;
+            removeItems(id, k);
+            const cs = J('characters', []), c = cs.find(x => x.id === ch.id);
+            c.exp = (c.exp || 0) + EXP[i.r] * k;
+            localStorage.setItem('characters', JSON.stringify(cs));
+            toast(`🙏 ${i.e}${k}こをほうのう！ ${c.name} に ⭐${EXP[i.r] * k}`);
+            vib(30);
+            confetti(12);
+            render();
+            openItem(id)
+        }
+
+        function exch(id, k) {
+            const i = itemById[id], n = ownedMap()[id] || 0;
+            k = Math.min(k, n - 1);
+            if (k < 1)return;
+            removeItems(id, k);
+            addTk(TKT[i.r] * k);
+            toast(`🎫 ${TKT[i.r] * k}まい ゲット！`);
+            vib(30);
+            render();
+            openItem(id)
+        }
+        // ほうび
+        const PREF = [
+            {k: 't5', n: '図鑑 5しゅるい', d: '🎫5まい', f: o => Object.keys(o).length >= 5, tk: 5},
+            {
+                k: 't10',
+                n: '図鑑 10しゅるい',
+                d: '🎫10まい ＋ 称号「祭りの子」',
+                f: o => Object.keys(o).length >= 10,
+                tk: 10,
+                title: '祭りの子'
+            },
+            {k: 't15', n: '図鑑 15しゅるい', d: '🎫15まい', f: o => Object.keys(o).length >= 15, tk: 15},
+            {k: 't20', n: '図鑑 20しゅるい', d: '🎫25まい', f: o => Object.keys(o).length >= 20, tk: 25},
+            {
+                k: 't26',
+                n: '図鑑 ぜんぶコンプリート！',
+                d: '🎫50まい ＋ 称号「おたから博士」',
+                f: o => Object.keys(o).length >= ITEMS.length,
+                tk: 50,
+                title: 'おたから博士'
+            },
+            ...Object.entries({
+                d: ['踊りの道具をそろえる', 15, '踊りの道具そろい'],
+                m: ['祭りの小物をそろえる', 15, '祭りの達人'],
+                g: ['鹿児島グルメをそろえる', 15, '鹿児島グルメ通'],
+                p: ['名所・工芸をそろえる', 5, 'ふるさと自慢']
+                }).map(([c, [n, tk, title]]) => ({
+                k: 'c_' + c,
+                n,
+                d: `🎫${tk}まい ＋ 称号「${title}」`,
+                f: o => ITEMS.filter(i => i.c === c).every(i => o[i.id]),
+                tk,
+                title
+                }))
+        ];
+
+        function renderRw() {
+            const o = ownedMap(), cl = J('takaraClaimed', {});
+            let ready = 0;
+            $('rwList').innerHTML = PREF.map(p => {
+                const ok = p.f(o), done = cl[p.k];
+                if (ok && !done)ready++;
+                return `<div class="rw ${ok && !done ? 'ok' : ''}"><div><b>${p.n}</b><div class="d">${p.d}</div></div><button class="rb ${ok && !done ? 'pul' : ''}" ${ok && !done ? '' : 'disabled'} onclick="claim('${p.k}')">${done ? 'もらった ✓' : ok ? 'うけとる！' : 'まだ…'}</button></div>`
+                }).join('');
+            $('badge').textContent = ready ? '🔴' : '';
+        }
+
+        function addTitle(name) {
+            const t = J('playerTitles', []);
+            if (t.some(x => (x.name || x) === name))return;
+            t.push(name);
+            localStorage.setItem('playerTitles', JSON.stringify(t));
+            const d = J('playerTitlesWithDates', {});
+            d[name] = Date.now();
+            localStorage.setItem('playerTitlesWithDates', JSON.stringify(d))
+        }
+
+        function claim(k) {
+            const p = PREF.find(x => x.k === k), cl = J('takaraClaimed', {});
+            if (cl[k] || !p.f(ownedMap()))return;
+            cl[k] = 1;
+            localStorage.setItem('takaraClaimed', JSON.stringify(cl));
+            addTk(p.tk);
+            if (p.title)addTitle(p.title);
+            toast(`🎉 🎫${p.tk}まい${p.title ? ' ＋ 称号「' + p.title + '」' : ''} ゲット！`);
+            vib([40, 30, 80]);
+            confetti(40);
+            render()
+        }
+        // 称号
+        const TDESC = {
+            '初心者': 'ガチャを1回引いた証',
+            '見習いコレクター': 'アイテムを5個集めた証',
+            'ゲーマー': 'ゲームを3回プレイした証',
+            'ガチャマスター': 'ガチャを10回引いた証',
+            'レア収集家': 'レア以上のアイテムを3個集めた証',
+            '熟練者': 'ゲームを10回プレイした証',
+            '真のコレクター': 'アイテムを30個集めた証',
+            '幸運の持ち主': 'スーパーレア以上を5個集めた証',
+            '伝説': 'ウルトラレアを3個集めた証',
+            '伝統の継承者': '歴史モードのラスボスを倒した証',
+            '祭りの子': 'おたから図鑑を10しゅるい集めた証',
+            'おたから博士': 'おたから図鑑をコンプリートした証',
+            '踊りの道具そろい': '踊りの道具を全部そろえた証',
+            '祭りの達人': '祭りの小物を全部そろえた証',
+            '鹿児島グルメ通': '鹿児島グルメを全部そろえた証',
+            'ふるさと自慢': '名所・工芸を全部そろえた証'
+        };
+
+        function renderTitles() {
+            let ts = J('playerTitles', []);
+            const wd = J('playerTitlesWithDates', {});
+            ts = ts.map(t => typeof t === 'string' ? {name: t, obtainedAt: wd[t] || Date.now()} : t).sort((a, b) => b.obtainedAt - a.obtainedAt);
+            const eq = localStorage.getItem('equippedTitle') || '';
+            $('tempty').style.display = ts.length ? 'none' : 'block';
+            $('tlist').innerHTML = ts.map(t => {
+                const on = t.name === eq;
+                return `<div class="tl"><div class="h"><div class="tn">👑 ${t.name}</div>${on ? '<span class="eq">そうび中</span>' : ''}</div><div class="td">${TDESC[t.name] || 'ミッションをクリアして獲得した称号'}</div><div class="td">${new Date(t.obtainedAt).toLocaleDateString('ja-JP')}</div>${on ? '<button class="u" onclick="uneq()">はずす</button>' : `<button onclick="equip(this.dataset.n)" data-n="${t.name}">そうびする</button>`}</div>`
+                }).join('');
+        }
+
+        function equip(n) {
+            localStorage.setItem('equippedTitle', n);
+            toast('「' + n + '」をそうびしたよ。ホームに出ます');
+            renderTitles()
+        }
+
+        function uneq() {
+            localStorage.setItem('equippedTitle', '');
+            renderTitles()
+        }
+
+        function render() {
+            $('tkn').textContent = tickets();
+            renderGrid();
+            renderRw();
+            renderTitles()
+        }
+        const rf = migrateOld();
+        if (rf)setTimeout(() => toast('古い景品を🎫' + rf + 'まいに交換したよ'), 400);
+        render();
+        addEventListener('focus', render);
+    </script>
+    <script src="kamante-bgm.js" data-bottom="16px"></script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ミッション - かまんてびーと</title>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffc233;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Klee One',sans-serif;
+            color: #fff8e7;
+            min-height: 100vh;
+            background: linear-gradient(180deg,#070b24,#151a55 50%,#3a1d5c);
+        }
+        .hd {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+            background: rgba(10,10,40,.88);
+            border-bottom: 1px solid rgba(255,255,255,.15);
+        }
+        .bk {
+            padding: 7px 12px;
+            background: var(--gold);
+            color: #2b1d00;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .st {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: right;
+        }
+        .wrap {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top,0px) + 62px) 12px 40px;
+        }
+        h1 {
+            font: 900 30px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255,194,51,.6);
+            margin: 6px 0 4px;
+        }
+        .sub {
+            text-align: center;
+            font-size: 14px;
+            opacity: .85;
+            margin-bottom: 12px;
+        }
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .tab {
+            flex: 1;
+            padding: 9px 4px;
+            border-radius: 16px;
+            border: 2px solid #fff;
+            background: transparent;
+            color: #fff;
+            font: 600 14px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .tab.on {
+            background: var(--gold);
+            color: #2b1d00;
+            border-color: var(--gold);
+        }
+        .m {
+            position: relative;
+            background: rgba(255,255,255,.1);
+            border: 2px solid rgba(255,255,255,.25);
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+        .m.ok {
+            border-color: var(--gold);
+            box-shadow: 0 0 16px rgba(255,194,51,.6);
+        }
+        .m.done {
+            opacity: .6;
+        }
+        .mh {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .mt {
+            font: 900 17px 'Zen Antique Soft',serif;
+        }
+        .df {
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 2px 10px;
+            color: #fff;
+            white-space: nowrap;
+        }
+        .df.easy {
+            background: #43a047;
+        }
+        .df.medium {
+            background: #f9a825;
+            color: #333;
+        }
+        .df.hard {
+            background: #e53935;
+        }
+        .df.extreme {
+            background: linear-gradient(135deg,#8e24aa,#ec407a);
+        }
+        .md {
+            font-size: 14px;
+            margin: 4px 0 8px;
+            opacity: .9;
+        }
+        .pr {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .bar {
+            flex: 1;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255,255,255,.2);
+            overflow: hidden;
+        }
+        .bar i {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg,#ffc233,#ff7043);
+            transition: width .6s;
+        }
+        .rw {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 8px 0;
+        }
+        .rw span {
+            background: rgba(0,0,0,.3);
+            border-radius: 12px;
+            padding: 3px 10px;
+            font-size: 13px;
+        }
+        .cb {
+            width: 100%;
+            padding: 10px;
+            border: 0;
+            border-radius: 14px;
+            background: var(--gold);
+            color: #2b1d00;
+            font: 600 16px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .cb:disabled {
+            background: rgba(255,255,255,.18);
+            color: #ccc;
+        }
+        .cb.pul {
+            animation: pl 1s infinite;
+        }
+        @keyframes pl {
+            50% {
+                box-shadow: 0 0 24px rgba(255,194,51,.95);
+            }
+        }
+        .empty {
+            text-align: center;
+            padding: 30px;
+            line-height: 1.8;
+        }
+        .toast {
+            position: fixed;
+            left: 50%;
+            top: 40%;
+            transform: translate(-50%,-50%);
+            z-index: 300;
+            background: rgba(20,10,50,.96);
+            border: 3px solid var(--gold);
+            border-radius: 22px;
+            padding: 20px 26px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            animation: tp .4s cubic-bezier(.2,1.4,.4,1);
+            box-shadow: 0 0 40px rgba(255,194,51,.6);
+        }
+        @keyframes tp {
+            from {
+                transform: translate(-50%,-50%) scale(.4);
+                opacity: 0;
+            }
+        }
+        .conf {
+            position: fixed;
+            top: -40px;
+            font-size: 28px;
+            animation: fall linear forwards;
+            pointer-events: none;
+            z-index: 500;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+        body {
+            background-attachment: fixed;
+        }
+        .hd {
+            backdrop-filter: blur(8px);
+        }
+        /*device-fix*/
+        button,a {
+            touch-action: manipulation;
+        }
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        @supports (-webkit-touch-callout:none) {
+            * {
+                -webkit-backdrop-filter: none!important;
+                backdrop-filter: none!important;
+            }
+            body {
+                background-attachment: scroll!important;
+            }
+        }
+        /*tablet*/
+        @media(min-width:768px) {
+            .wrap {
+                zoom: 1.25;
+            }
+            .hd {
+                zoom: 1.1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hd">
+        <a class="bk" href="index.html">🏠 ホーム</a>
+        <div class="st">🎯 <span id="cc">0</span>/<span id="tc">0</span> ・ 🎫 <span id="tkn">0</span></div>
+    </div>
+    <div class="wrap">
+        <h1>🎯 ミッション</h1>
+        <div class="sub">クリアすると、チケットと称号がもらえるよ！</div>
+        <div class="tabs">
+            <button class="tab on" data-f="todo">チャレンジ中</button>
+            <button class="tab" data-f="done">クリアずみ</button>
+        </div>
+        <div id="list"></div>
+    </div>
+    <script>
+        const J = (k, d) => {
+            try {
+                return JSON.parse(localStorage.getItem(k)) || d
+            } catch (e) {
+                return d
+            }
+        };
+        const N = k => parseInt(localStorage.getItem(k)) || 0;
+        const M = [
+            {
+                id: 1,
+                t: 'はじめての福引',
+                d: '福引を1回ひく',
+                p: s => s.gacha,
+                g: 1,
+                df: 'easy',
+                tk: 10,
+                title: '初心者'
+            },
+            {
+                id: 3,
+                t: 'ゲームをあそぼう',
+                d: 'ゲームを3回あそぶ',
+                p: s => s.play,
+                g: 3,
+                df: 'easy',
+                tk: 15,
+                title: 'ゲーマー'
+            },
+            {
+                id: 20,
+                t: 'リズムにのろう',
+                d: 'かまんてリズムを5回あそぶ',
+                p: s => s.rhythm,
+                g: 5,
+                df: 'easy',
+                tk: 15,
+                title: 'リズムの子'
+            },
+            {
+                id: 22,
+                t: 'パズルにちょうせん',
+                d: 'かまんてパズルを1回クリアする',
+                p: s => s.puzzle,
+                g: 1,
+                df: 'easy',
+                tk: 15,
+                title: 'パズルの子'
+            },
+            {
+                id: 2,
+                t: 'おたから集め',
+                d: 'おたからを5こ集める',
+                p: s => s.items,
+                g: 5,
+                df: 'easy',
+                tk: 10,
+                title: '見習いコレクター'
+            },
+            {
+                id: 4,
+                t: 'ふくびき名人',
+                d: '福引を10回ひく',
+                p: s => s.gacha,
+                g: 10,
+                df: 'medium',
+                tk: 25,
+                title: 'ガチャマスター'
+            },
+            {
+                id: 21,
+                t: '走れ走れ！',
+                d: 'かまんてランで1000点とる',
+                p: s => s.runBest,
+                g: 1000,
+                df: 'medium',
+                tk: 25,
+                title: 'ランナー'
+            },
+            {
+                id: 24,
+                t: '図鑑コレクター',
+                d: 'おたから図鑑を10しゅるい集める',
+                p: s => s.zukan,
+                g: 10,
+                df: 'medium',
+                tk: 25,
+                title: '祭りの子'
+            },
+            {
+                id: 6,
+                t: 'ベテランプレイヤー',
+                d: 'ゲームを10回あそぶ',
+                p: s => s.play,
+                g: 10,
+                df: 'medium',
+                tk: 40,
+                title: '熟練者'
+            },
+            {
+                id: 23,
+                t: 'バッジ集め',
+                d: 'バッジを10こ集める',
+                p: s => s.badges,
+                g: 10,
+                df: 'medium',
+                tk: 40,
+                title: 'バッジ名人'
+            },
+            {
+                id: 7,
+                t: 'なかま集め',
+                d: 'なかまを2人にする(道宮先生もふくむ)',
+                p: s => s.chars,
+                g: 2,
+                df: 'hard',
+                tk: 40,
+                title: 'キャラコレクター'
+            },
+            {
+                id: 8,
+                t: '真のコレクター',
+                d: 'おたからを30こ集める',
+                p: s => s.items,
+                g: 30,
+                df: 'hard',
+                tk: 40,
+                title: '真のコレクター'
+            },
+            {
+                id: 12,
+                t: 'レジェンドハンター',
+                d: 'レジェンドを1回当てる',
+                p: s => s.legend,
+                g: 1,
+                df: 'hard',
+                tk: 50,
+                title: '伝説の狩人'
+            },
+            {
+                id: 11,
+                t: '歴史の継承者',
+                d: '歴史モードをクリアする',
+                p: s => s.history,
+                g: 1,
+                df: 'hard',
+                tk: 60,
+                title: '伝統の継承者'
+            },
+            {
+                id: 13,
+                t: '百戦錬磨',
+                d: 'ゲームを100回あそぶ',
+                p: s => s.play,
+                g: 100,
+                df: 'hard',
+                tk: 100,
+                title: '百戦錬磨'
+            },
+            {
+                id: 14,
+                t: '完全制覇',
+                d: 'なかまを5人そろえる',
+                p: s => s.chars,
+                g: 5,
+                df: 'extreme',
+                tk: 150,
+                title: 'コンプリート マスター'
+            },
+            {
+                id: 15,
+                t: '奇跡の目撃者',
+                d: 'シークレットを当てる',
+                p: s => s.secret,
+                g: 1,
+                df: 'extreme',
+                tk: 200,
+                title: '奇跡の申し子'
+            },
+            {
+                id: 16,
+                t: '不屈の戦士',
+                d: 'ゲームを1000回あそぶ',
+                p: s => s.play,
+                g: 1000,
+                df: 'extreme',
+                tk: 300,
+                title: '不屈の魂'
+            }
+        ];
+        const DF = {easy: 'かんたん', medium: 'ふつう', hard: 'むずかしい', extreme: '超なんかん'};
+        let filter = 'todo';
+
+        function stats() {
+            const col = J('collection', []), gh = J('gachaHistory', []), titles = J('playerTitles', []);
+            const rs = J('rhythmGameStats', {}), run = J('runGameStats', {}), pz = J('puzzleGameStats', {});
+            const bd = Object.keys((J('kamanteBadgeData', {}).earned) || {}).length + Object.keys(J('kamanteRunBadges', {})).length + Object.keys(J('kamantePuzzleBadges', {})).length;
+            const uniq = new Set(col.filter(x => x.tk).map(x => x.itemId)).size;
+            return {
+                gacha: N('gachaCount'),
+                play: N('gamePlayCount'),
+                rhythm: rs.playCount || 0,
+                puzzle: pz.playCount || 0,
+                runBest: run.bestScore || 0,
+                items: col.filter(x => !x.isCharacter).length,
+                zukan: uniq,
+                badges: bd,
+                chars: J('characters', []).length,
+                legend: gh.filter(x => x.rarity === 6).length,
+                secret: gh.filter(x => x.rarity === 7).length,
+                history: titles.some(t => (t.name || t) === '伝統の継承者') ? 1 : 0
+            };
+        }
+
+        function render() {
+            const s = stats(), done = J('completedMissions', []);
+            const list = M.filter(m => filter === 'done' ? done.includes(m.id) : !done.includes(m.id));
+            document.getElementById('cc').textContent = done.length;
+            document.getElementById('tc').textContent = M.length;
+            document.getElementById('tkn').textContent = N('ticketCount');
+            document.getElementById('list').innerHTML = list.length ? list.map(m => {
+                const p = Math.min(m.p(s), m.g), ok = p >= m.g, dn = done.includes(m.id), pc = p / m.g * 100;
+                return `<div class="m ${ok && !dn ? 'ok' : ''} ${dn ? 'done' : ''}"><div class="mh"><div class="mt">${m.t}</div><span class="df ${m.df}">${DF[m.df]}</span></div><div class="md">${m.d}</div><div class="pr"><span>${p}/${m.g}</span><div class="bar"><i style="width:${pc}%"></i></div><span>${Math.floor(pc)}%</span></div><div class="rw"><span>🎫 ${m.tk}まい</span><span>👑 ${m.title}</span></div><button class="cb ${ok && !dn ? 'pul' : ''}" ${ok && !dn ? '' : 'disabled'} onclick="claim(${m.id})">${dn ? '✅ クリアずみ' : ok ? '🎁 うけとる！' : '🔒 まだだよ'}</button></div>`
+                }).join('') :
+            `<div class="empty">${filter === 'done' ? 'まだクリアしたミッションはないよ。<br>がんばろう！' : '🎉 ぜんぶクリア！<br>すごいね！'}</div>`;
+        }
+
+        function claim(id) {
+            const m = M.find(x => x.id === id), done = J('completedMissions', []);
+            if (!m || done.includes(id) || m.p(stats()) < m.g)return;
+            localStorage.setItem('ticketCount', N('ticketCount') + m.tk);
+            const t = J('playerTitles', []);
+            if (!t.some(x => (x.name || x) === m.title)) {
+                t.push(m.title);
+                localStorage.setItem('playerTitles', JSON.stringify(t));
+                const d = J('playerTitlesWithDates', {});
+                d[m.title] = Date.now();
+                localStorage.setItem('playerTitlesWithDates', JSON.stringify(d))
+            }
+            done.push(id);
+            localStorage.setItem('completedMissions', JSON.stringify(done));
+            const e = document.createElement('div');
+            e.className = 'toast';
+            e.innerHTML = `🎉 ミッションクリア！<br>🎫 ${m.tk}まい ＋ 👑 ${m.title}`;
+            document.body.appendChild(e);
+            setTimeout(() => e.remove(), 2200);
+            if (navigator.vibrate)navigator.vibrate([40, 30, 80]);
+            const em = ['🎊', '⭐', '🏮', '✨'];
+            for (let i = 0; i < 36; i++) {
+                const c = document.createElement('div');
+                c.className = 'conf';
+                c.textContent = em[i % 4];
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.animationDuration = (2 + Math.random() * 2) + 's';
+                c.style.animationDelay = Math.random() * .8 + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 5000)
+            }
+            render();
+        }
+        document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
+            filter = b.dataset.f;
+            document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === b));
+            render()
+            });
+        render();
+        addEventListener('focus', render);
+    </script>
+    <script src="kamante-bgm.js" data-bottom="16px"></script>
+</body>
+</html>

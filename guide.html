@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>あそびかたガイド - かまんてびーと</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffc233;
+            --ink: #fff8e7;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Klee One',sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+            background: linear-gradient(180deg,#070b24,#151a55 50%,#3a1d5c);
+            line-height: 1.8;
+            font-size: 17px;
+        }
+        .hd {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+            background: rgba(10,10,40,.95);
+            border-bottom: 1px solid rgba(255,255,255,.15);
+        }
+        .bk {
+            padding: 8px 14px;
+            background: var(--gold);
+            color: #2b1d00;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .sz {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            font-size: 14px;
+        }
+        .sz button {
+            min-width: 44px;
+            padding: 0 8px;
+            white-space: nowrap;
+            height: 40px;
+            border-radius: 12px;
+            border: 2px solid #fff;
+            background: transparent;
+            color: #fff;
+            font: 600 16px 'Klee One',sans-serif;
+        }
+        .sz button.on {
+            background: var(--gold);
+            color: #2b1d00;
+            border-color: var(--gold);
+        }
+        .wrap {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top,0px) + 68px) 14px 70px;
+        }
+        h1 {
+            font: 900 32px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            text-align: center;
+            text-shadow: 0 0 22px rgba(255,194,51,.6);
+            margin: 6px 0 4px;
+        }
+        .lead {
+            text-align: center;
+            opacity: .92;
+            margin-bottom: 14px;
+        }
+        .hero {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 6px 0 10px;
+        }
+        .hero img {
+            width: 19%;
+            max-width: 110px;
+            height: auto;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,.4));
+        }
+        .start {
+            background: linear-gradient(135deg,rgba(255,112,67,.28),rgba(255,194,51,.22));
+            border: 3px solid var(--gold);
+            border-radius: 22px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+        .start h2 {
+            font-size: 20px;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .start ol {
+            padding-left: 1.3em;
+        }
+        .toc {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .toc a {
+            padding: 8px 14px;
+            border-radius: 16px;
+            border: 2px solid rgba(255,255,255,.5);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        details {
+            background: rgba(255,255,255,.09);
+            border: 2px solid rgba(255,255,255,.25);
+            border-radius: 20px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        summary {
+            padding: 14px 16px;
+            font: 900 20px 'Zen Antique Soft',serif;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: '＋';
+            margin-left: auto;
+            color: var(--gold);
+            font-size: 24px;
+        }
+        details[open] summary::after {
+            content: '−';
+        }
+        details[open] {
+            border-color: var(--gold);
+        }
+        .bd {
+            padding: 2px 16px 16px;
+        }
+        .bd h3 {
+            font-size: 18px;
+            color: var(--gold);
+            margin: 12px 0 2px;
+        }
+        .bd p,.bd li {
+            margin: 4px 0;
+        }
+        .bd ul,.bd ol {
+            padding-left: 1.3em;
+        }
+        .tip {
+            background: rgba(127,255,170,.12);
+            border-left: 5px solid #7bd88f;
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .warn {
+            background: rgba(255,138,128,.14);
+            border-left: 5px solid #ff8a80;
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0;
+            font-size: 15px;
+        }
+        th,td {
+            border: 1px solid rgba(255,255,255,.25);
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: rgba(255,194,51,.2);
+        }
+        .ch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 6px 0;
+        }
+        .ch img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            flex: none;
+        }
+        .kb {
+            display: inline-block;
+            background: rgba(255,255,255,.18);
+            border-radius: 8px;
+            padding: 0 8px;
+            font-weight: 600;
+        }
+        .go {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 18px 0 8px;
+            padding: 14px;
+            border-radius: 24px;
+            background: linear-gradient(135deg,#ff8a65,#e53935);
+            color: #fff;
+            text-decoration: none;
+            font: 600 20px 'Klee One',sans-serif;
+            box-shadow: 0 5px 0 #8e1a1a;
+        }
+        @media(min-width:768px) {
+            body {
+                font-size: 19px;
+            }
+            .wrap {
+                max-width: 860px;
+            }
+        }
+        /*device-fix*/
+        button,a {
+            touch-action: manipulation;
+        }
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        @supports (-webkit-touch-callout:none) {
+            * {
+                -webkit-backdrop-filter: none!important;
+                backdrop-filter: none!important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hd">
+        <a class="bk" href="index.html">🏠 ホーム</a>
+        <div class="sz">
+            もじ
+            <button data-s="1">ふつう</button>
+            <button data-s="1.2">大</button>
+            <button data-s="1.4">特大</button>
+        </div>
+    </div>
+    <div class="wrap" id="wrap">
+        <h1>📖 あそびかたガイド</h1>
+        <p class="lead">玉利の鎌手踊りを、あそびながら知って、好きになろう！</p>
+        <div class="hero">
+            <img src="illust/chars/char1.svg" alt="">
+            <img src="illust/chars/char2.svg" alt="">
+            <img src="illust/chars/char3.svg" alt="">
+            <img src="illust/chars/char4.svg" alt="">
+            <img src="illust/chars/char5.svg" alt="">
+        </div>
+        <div class="start">
+            <h2>🌟 はじめての人へ</h2>
+            <ol>
+                <li>ホームの、大きな「<b>かまんてリズム</b>」をおして あそぼう。</li>
+                <li>ゲームをあそぶと、🎫<b>チケット</b>がたまるよ。</li>
+                <li>チケットで「<b>福引</b>」をひいて、おたからを集めよう。</li>
+                <li>わからなくなったら、ホームの「もっと」→「説明」で、このページにもどれるよ。</li>
+            </ol>
+        </div>
+        <div class="toc">
+            <a href="#home">ホーム</a>
+            <a href="#rhythm">リズム</a>
+            <a href="#run">ラン</a>
+            <a href="#puzzle">パズル</a>
+            <a href="#gacha">福引</a>
+            <a href="#zukan">図鑑</a>
+            <a href="#grow">育成</a>
+            <a href="#history">歴史</a>
+            <a href="#etc">ミッション</a>
+            <a href="#rank">ログイン</a>
+            <a href="#setting">せってい</a>
+            <a href="#faq">こまったとき</a>
+            <a href="#about">かまんてとは</a>
+        </div>
+        <details id="home">
+            <summary>🏠 ホーム画面の見かた</summary>
+            <div class="bd">
+                <ul>
+                    <li><b>いちばん上</b>: あなたの名前と、🎫チケットの数。「ログイン」をおすと、記録がのこせます。</li>
+                    <li><b>大きな写真</b>: 下に「かまんてのひとこと」が出ます。さわると、つぎの豆知識になります。</li>
+                    <li><b>かまんてリズム</b>: いちばんのおすすめ。ベストスコアも出ます。</li>
+                    <li><b>かまんてラン・かまんてパズル</b>: ミニゲームです。</li>
+                    <li><b>下のバー</b>: 福引 / 育成 / 歴史 / ランキング / もっと</li>
+                    <li><b>「もっと」の中</b>: きょうのごほうび / ミッション / おたから図鑑 / 練習動画 / 説明 / 文字の大きさ</li>
+                </ul>
+                <div class="tip">💡 ホームを開いたとき、「きょうのごほうび」が出たら、「うけとる！」をおそう。毎日🎫がもらえます。</div>
+            </div>
+        </details>
+        <details id="rhythm">
+            <summary>🥁 かまんてリズム</summary>
+            <div class="bd">
+                <p>鎌手踊りの動画が背景に流れます。<b>光る輪が、マスにぴったり重なる瞬間</b>に、そのマスをタップ！</p>
+                <h3>あそびかた</h3>
+                <ol>
+                    <li>「やさしい」か「ふつう」をえらんで、<span class="kb">START</span>。</li>
+                    <li>マスの上に、<b>赤い輪</b>が出て、ゆっくり小さくなります。</li>
+                    <li>輪が<b>白い丸</b>に重なったら、そのマスをタップ。</li>
+                </ol>
+                <h3>はんてい</h3>
+                <table>
+                    <tr>
+                        <th>はんてい</th>
+                        <th>いみ</th>
+                    </tr>
+                    <tr>
+                        <td>すばらしい(PERFECT)</td>
+                        <td>ぴったり！いちばん高い点</td>
+                    </tr>
+                    <tr>
+                        <td>いいね(GREAT)</td>
+                        <td>ほぼぴったり</td>
+                    </tr>
+                    <tr>
+                        <td>おしい(GOOD)</td>
+                        <td>すこしズレた</td>
+                    </tr>
+                </table>
+                <p>つづけて成功すると<b>コンボ</b>で、点がふえます。あなたがおしたマスが ちがっても、ペナルティはありません。</p>
+                <div class="tip">💡 輪の動きを見て、「ここだ！」と思う前に、すこし先を読んでタップすると うまくいきます。タップした音が出るので、リズムにのってみよう。</div>
+                <p>🎫チケット: 4〜12まい(成績によって)。結果画面には、スコアと、あなたのクセも出ます。</p>
+            </div>
+        </details>
+        <details id="run">
+            <summary>🏃 かまんてラン</summary>
+            <div class="bd">
+                <p>お祭りに向かって走る、ランゲームです。障害物をよけて、🪙をあつめよう。</p>
+                <h3>そうさ</h3>
+                <ul>
+                    <li><b>画面の上をタップ</b> または ⬆️ボタン = ジャンプ。<b>空中でもう一回</b>で、2だんジャンプ。</li>
+                    <li><b>画面の下をタップ</b> または ⬇️ボタン = しゃがむ。</li>
+                    <li>パソコンは、スペースキー(ジャンプ)と、↓キー(しゃがむ)。</li>
+                </ul>
+                <h3>障害物(しゅるいがいっぱい)</h3>
+                <ul>
+                    <li>竹・太鼓・たる・転がる太鼓・火の玉・穴 → <b>ジャンプ</b>で越える</li>
+                    <li>提灯・幟・鳥居 → <b>しゃがんで</b>くぐる</li>
+                    <li>高い石灯籠 → <b>2だんジャンプ</b></li>
+                    <li>鳥 → ジャンプでも、しゃがみでもOK</li>
+                </ul>
+                <p>はじめて出る障害物には、🆕のヒントが出ます。</p>
+                <h3>アイテム</h3>
+                <ul>
+                    <li>🌟 むてき(障害物をふっとばす)　🧲 コインよせ　🍙 コイン2ばい　❤ かいふく　💎 ダイヤ(+100点)</li>
+                    <li>🪙をつづけて取ると<b>コンボ</b>。30コンボで🔥<b>FEVER</b>（コイン2ばい）！</li>
+                </ul>
+                <h3>モードと腕前</h3>
+                <ul>
+                    <li><b>やさしい</b>: ハート3つ。　<b>ふつう</b>: 1回当たったら終わり。</li>
+                    <li>あそぶたびに<b>腕前(Lv)</b>が上がり、<b>だんだんむずかしく</b>なります。</li>
+                </ul>
+                <div class="tip">💡 画面の向きは、よこむきのほうが、遠くまで見えてあそびやすいです。右上の音ボタンで、BGMあり・効果音だけ・なしを切りかえられます。</div>
+                <p>🎫チケット: 3〜15まい(＋ミッションの分)。結果画面に、1回ごとの3つのミッションが出ます。</p>
+            </div>
+        </details>
+        <details id="puzzle">
+            <summary>🧩 かまんてパズル</summary>
+            <div class="bd">
+                <p>バラバラのピースを並べて、写真を完成させよう。</p>
+                <ul>
+                    <li><b>やさしい</b> 20ピース / <b>ふつう</b> 48ピース / <b>むずかしい</b> 100ピース</li>
+                </ul>
+                <h3>ピースの置きかた(どちらでもOK)</h3>
+                <ol>
+                    <li><b>タップ</b>: 下のピースをタップ → 光ったところをタップ。</li>
+                    <li><b>ドラッグ</b>: ピースを指でひっぱって、場所に近づけて はなす。</li>
+                </ol>
+                <p>まちがった場所には、置けません(ぷるっとゆれるだけです)。</p>
+                <h3>べんりなボタン(上の列)</h3>
+                <ul>
+                    <li>💡 ヒント: つぎのピースを光らせます(かわりに +10秒)。</li>
+                    <li>🖼 完成図　👻 うっすら完成図　➕➖ 大きさ　🔊 音　🚪 やめる</li>
+                </ul>
+                <p>はやく完成するほど、⭐が多くもらえます(最大3つ)。🎫チケットは、5・8・12まい(＋⭐の分)。</p>
+            </div>
+        </details>
+        <details id="gacha">
+            <summary>🎰 おたから福引</summary>
+            <div class="bd">
+                <p>🎫チケットを使って、お祭りの「おたから」を引こう。</p>
+                <ol>
+                    <li>「たんぱつ」(1まい) または「10れん」(10まい)をえらぶ。</li>
+                    <li>出てきた<b>太鼓を3回タップ</b>！</li>
+                    <li><b>カプセル</b>が出るよ。色で、中身のレア度がわかります。タップして あけよう。</li>
+                </ol>
+                <h3>レア度</h3>
+                <table>
+                    <tr>
+                        <th>★</th>
+                        <th>よび名</th>
+                    </tr>
+                    <tr>
+                        <td>★</td>
+                        <td>ふつう</td>
+                    </tr>
+                    <tr>
+                        <td>★★</td>
+                        <td>めずらしい</td>
+                    </tr>
+                    <tr>
+                        <td>★★★</td>
+                        <td>レア</td>
+                    </tr>
+                    <tr>
+                        <td>★★★★</td>
+                        <td>スーパーレア</td>
+                    </tr>
+                    <tr>
+                        <td>★★★★★</td>
+                        <td>ウルトラレア</td>
+                    </tr>
+                    <tr>
+                        <td>👑</td>
+                        <td>レジェンド(なかまのキャラ！)</td>
+                    </tr>
+                    <tr>
+                        <td>🌈</td>
+                        <td>シークレット(とてもめずらしい！)</td>
+                    </tr>
+                </table>
+                <ul>
+                    <li>10れんは、<b>★3いじょうが1こ</b>かならず出ます。</li>
+                    <li><b>おまつりゲージ</b>: 30回ひくと、つぎの福引で★4いじょうが1こ確定！</li>
+                    <li>なかまがダブると、🎫30まいにかわります。</li>
+                    <li>演出は、タップで進めます。「スキップ」もできます。</li>
+                </ul>
+            </div>
+        </details>
+        <details id="zukan">
+            <summary>📚 おたから図鑑</summary>
+            <div class="bd">
+                <p>引いたおたからが、絵と説明つきでのこります。ぜんぶで<b>26しゅるい</b>。まだ見つけていないものは、黒い かげで出ます。</p>
+                <h3>ダブったおたからの使いみち</h3>
+                <ul>
+                    <li>🙏 <b>ほうのう</b>: 育成キャラの経験値になります。</li>
+                    <li>🎫 <b>こうかん</b>: チケットにかえられます。</li>
+                    <li>※ どちらも、1こは図鑑にのこります。</li>
+                </ul>
+                <h3>ほうび・しょうごう</h3>
+                <p>図鑑を5・10・15・20・26しゅるいそろえると、🎫がもらえます。しゅるいごとにそろえると、<b>称号👑</b>ももらえます。称号は、えらぶと、ホームに出ます。</p>
+            </div>
+        </details>
+        <details id="grow">
+            <summary>🌱 育成(なかま)</summary>
+            <div class="bd">
+                <div class="ch">
+                    <img src="illust/chars/char1.svg" alt="">
+                    <span><b>たまりくん</b> — はじめからいるなかま</span>
+                </div>
+                <div class="ch">
+                    <img src="illust/chars/char2.svg" alt="">
+                    <span><b>かまたろう</b> — 福引で出会える</span>
+                </div>
+                <div class="ch">
+                    <img src="illust/chars/char3.svg" alt="">
+                    <span><b>さくらちゃん</b> — 福引で出会える</span>
+                </div>
+                <div class="ch">
+                    <img src="illust/chars/char4.svg" alt="">
+                    <span><b>ともりん</b> — 福引で出会える</span>
+                </div>
+                <div class="ch">
+                    <img src="illust/chars/char5.svg" alt="">
+                    <span><b>KJラビット</b> — シークレットで出会える</span>
+                </div>
+                <ul>
+                    <li>ゲームをあそぶと、<b>つかっているキャラ</b>に経験値が入り、レベルアップ。</li>
+                    <li>レベルが上がると、HP・こうげき・ぼうぎょ・かまんて力が強くなります。</li>
+                    <li>「このキャラを使う」で、歴史モードの戦闘に出るキャラをえらべます。</li>
+                </ul>
+            </div>
+        </details>
+        <details id="history">
+            <summary>🗺️ 歴史モード「かまんて探訪」</summary>
+            <div class="bd">
+                <p>夕暮れの玉利の里を、<b>3Dで歩きながら</b>、かまんて踊りの物語をたどります。道宮先生が案内してくれます。</p>
+                <h3>そうさ</h3>
+                <ul>
+                    <li>📱 スマホ・タブレット: <b>左下をなぞると歩く</b>、<b>右側をなぞると見まわす</b>。</li>
+                    <li>💻 パソコン: <span class="kb">W A S D</span>で歩く、マウスのドラッグで見まわす。</li>
+                    <li>ボタンが出たらタップ（「はなす」「ともす」「たたく」「よむ」など）。</li>
+                    <li>🧭 <b>自動で歩く</b>: おすと、目的地まで歩いてくれます。</li>
+                    <li>右上の<b>ミニ地図</b>と、左上の<b>矢印</b>が、行き先を教えてくれます。光の柱が目印です。</li>
+                    <li>⚙ <b>せってい</b>: 見まわす はやさ・文字の大きさ・カメラ演出・<b>画質(ふつう/きれい)</b></li>
+                </ul>
+                <h3>5つの章</h3>
+                <ol>
+                    <li>権現神社: 石灯籠5つに あかりをともす</li>
+                    <li>静かな広場: 記憶のかけらを6つ あつめる</li>
+                    <li>古い蔵: 古い資料の巻物を4つ さがす</li>
+                    <li>つなぐ広場: たいこを拍に合わせてたたく</li>
+                    <li>お祭り広場: <b>わすれの影</b>と戦う</li>
+                </ol>
+                <h3>よりみちも楽しもう</h3>
+                <ul>
+                    <li>📖 <b>石碑</b>(8つ): 近づいて「よむ」と、豆知識が「ひとことずかん」にたまります。</li>
+                    <li>🪙 <b>かくれ小判</b>(8つ): 里のすみにかくれています。</li>
+                    <li>💬 <b>むらびと</b>に話しかけてみよう。</li>
+                </ul>
+                <h3>⚔️ 戦闘のしかた</h3>
+                <table>
+                    <tr>
+                        <th>ボタン</th>
+                        <th>はたらき</th>
+                    </tr>
+                    <tr>
+                        <td>⚔️ こうげき</td>
+                        <td>ふつうに攻撃。ゲージがたまる。</td>
+                    </tr>
+                    <tr>
+                        <td>🛡️ ぼうぎょ</td>
+                        <td>つぎに受けるダメージが半分。</td>
+                    </tr>
+                    <tr>
+                        <td>✨ 必殺技</td>
+                        <td>ゲージが100でつかえる。キャラごとにちがう！</td>
+                    </tr>
+                    <tr>
+                        <td>🙏 いのり</td>
+                        <td>HPを30％かいふく(2回まで)。</td>
+                    </tr>
+                </table>
+                <p>敵が「<b>ちからをためている</b>」ときは、<b>ぼうぎょ</b>のチャンス！</p>
+                <h3>キャラごとの必殺技</h3>
+                <table>
+                    <tr>
+                        <th>キャラ</th>
+                        <th>必殺技</th>
+                    </tr>
+                    <tr>
+                        <td>たまりくん</td>
+                        <td>鎌手大旋風: 3回切りつける。つぎのダメージ半分。</td>
+                    </tr>
+                    <tr>
+                        <td>かまたろう</td>
+                        <td>かまいたち: すばやく切る。ぼうぎょをつらぬく。</td>
+                    </tr>
+                    <tr>
+                        <td>さくらちゃん</td>
+                        <td>桜吹雪: こうげき＋HPかいふく。</td>
+                    </tr>
+                    <tr>
+                        <td>ともりん</td>
+                        <td>提灯の光: 光のビーム。敵のこうげきが弱まる。</td>
+                    </tr>
+                    <tr>
+                        <td>KJラビット</td>
+                        <td>ラビットジャンプ: たたきつける。ときどき気絶。</td>
+                    </tr>
+                </table>
+                <div class="tip">💡 ボスは、<b>なかまのレベルに合わせて強く</b>なります。負けても大丈夫。「もう一度ちょうせん」をおすと、影が少し弱まります。ゲームで強くなってからでもOK！</div>
+                <p>🎫チケット・経験値は、各章を<b>はじめてクリアしたとき</b>だけもらえます。</p>
+            </div>
+        </details>
+        <details id="etc">
+            <summary>🎯 ミッション・きょうのごほうび・練習動画</summary>
+            <div class="bd">
+                <h3>🎯 ミッション</h3>
+                <p>「福引を1回ひく」「パズルをクリア」などの目標をクリアすると、🎫と<b>称号</b>がもらえます。「うけとる！」をおして、受け取ろう。</p>
+                <h3>📅 きょうのごほうび</h3>
+                <p>毎日ひらくと、🎫がもらえます(1日め〜7日め)。1日お休みしても、つづきからOK。</p>
+                <h3>🎬 練習動画</h3>
+                <ul>
+                    <li>🐢 <b>はやさ</b>をえらべます(ゆっくり ×0.5 など)。</li>
+                    <li>🪞 <b>左右はんてん</b>: 鏡のように まねしやすくなります。</li>
+                    <li>📍🏁 <b>ここから・ここまで</b>: むずかしいところを くりかえし。</li>
+                    <li>1分見ると、🎫3まい(1日1回)。</li>
+                </ul>
+            </div>
+        </details>
+        <details id="rank">
+            <summary>🏆 ランキング・ログイン</summary>
+            <div class="bd">
+                <ul>
+                    <li><b>ログインしなくても</b>あそべます(ゲスト)。ランキングにのるには、ログインが必要です。</li>
+                    <li>新規登録: ホームの「ログイン」→ ID(ニックネーム)とパスワードを入れて「新規登録」。</li>
+                    <li><b>IDは3〜16文字</b>。ひらがな・カタカナ・漢字・英数字・＿ が使えます。</li>
+                </ul>
+                <div class="warn">⚠️ ランキングに<b>名前が出ます</b>。<b>本名・学校名・住所は入れない</b>でね。パスワードは<b>わすれないようにメモ</b>しておこう(メールがないので、再設定できません)。</div>
+                <ul>
+                    <li>ランキングは、リズム・ラン・パズル(3つの難しさ)ごとに見られます。自分の順位と、「ひとつ上まであと何点」も出ます。</li>
+                    <li>やめたいときは、ログイン後に「退会」をおします(記録はすべて消えます)。</li>
+                </ul>
+                <p>チケット・キャラ・図鑑のデータは、<b>この端末のブラウザ</b>にほぞんされます。ブラウザのデータを消したり、べつの端末にかえると、もどりません。</p>
+            </div>
+        </details>
+        <details id="setting">
+            <summary>🔊 おと・もじ・画面のせってい</summary>
+            <div class="bd">
+                <ul>
+                    <li>🎵 <b>BGM</b>: 画面の左下のボタンで オン・オフ。ページを開いて、<b>最初に1回タップ</b>すると鳴り始めます。</li>
+                    <li>📱 <b>iPhone・iPad</b>: 本体の<b>消音スイッチをOFF</b>にしてね。</li>
+                    <li>🔠 <b>文字の大きさ</b>: ホームの「もっと」→「文字の大きさ」。このページの上にも あります。</li>
+                    <li>🎮 <b>ランの音</b>: 右上の音ボタンで、BGMあり・効果音だけ・なし。</li>
+                    <li>🗺️ <b>歴史モード</b>: ⚙で、見まわす はやさ・画質などを かえられます。</li>
+                </ul>
+            </div>
+        </details>
+        <details id="faq">
+            <summary>❓ こまったとき</summary>
+            <div class="bd">
+                <h3>音が出ない</h3>
+                <p>ページを開いて、一度画面をタップしてください。iPhone・iPadは、消音スイッチをOFFに。左下の🎵が「🔇」になっていたら、おして切りかえます。</p>
+                <h3>歴史モードが開かない / 3Dが出ない</h3>
+                <p>インターネットにつながっているか、確認してください(3Dの部品を読みこむため)。古い端末では動かないことがあります。</p>
+                <h3>動きが重い・カクカクする</h3>
+                <p>歴史モードの⚙で、画質を「ふつう」にして、「カメラ演出」を OFF に。ほかのアプリを閉じるのも効果的です。</p>
+                <h3>画面がずれる・文字が小さい</h3>
+                <p>ホームの「もっと」→「文字の大きさ」で、大きくできます。スマホは、たてもち・よこもち、どちらでも使えます。</p>
+                <h3>チケットが足りない</h3>
+                <p>ゲーム(1日6回まで満額)・きょうのごほうび・練習動画・ミッションで、ためられます。</p>
+                <h3>データが消えた</h3>
+                <p>ブラウザに保存しているため、ブラウザのデータを消すと もどりません。同じ端末・同じブラウザで あそんでください。</p>
+            </div>
+        </details>
+        <details id="about">
+            <summary>🏮 玉利の鎌手踊りとは</summary>
+            <div class="bd">
+                <ul>
+                    <li>鹿児島市下福元町の<b>玉利集落</b>に、<b>約240年前</b>から伝わる踊りです。</li>
+                    <li><b>豊作</b>と<b>無病息災</b>を祈って、踊られてきました。</li>
+                    <li>踊り手は、<b>「鎌」の6人</b>と<b>「棒」の6人</b>。歌に合わせて、鎌と棒を<b>はげしく打ち合わせる</b>のが見どころです。</li>
+                    <li>いちど とだえましたが、地域の人たちの手で、<b>よみがえりました</b>。</li>
+                    <li>今は、高校生たちが授業で練習し、小学校や施設で披露して、<b>次の世代へ</b>つないでいます。</li>
+                </ul>
+                <p>このアプリは、遊びながら、この踊りを知って、好きになってもらうために作られました。</p>
+            </div>
+        </details>
+        <a class="go" href="index.html">🏠 ホームにもどる</a>
+    </div>
+    <script>
+        // 文字の大きさ(最初だけホームの設定を読む)
+        (function() {
+            var J = function(k, d) {
+                try {
+                    return JSON.parse(localStorage.getItem(k)) || d
+                } catch (e) {
+                    return d
+                }
+            };
+            // このページ内だけの文字サイズ(ホームの設定には書きこまない=ホームにもどれば元のまま)
+            var ts = +J('kamanteSettings', {}).ts || 1;
+
+            function apply() {
+                document.getElementById('wrap').style.zoom = ts;
+                document.querySelectorAll('.sz button').forEach(function(b) {
+                    b.classList.toggle('on', +b.dataset.s === ts)
+                    })
+            }
+            document.querySelectorAll('.sz button').forEach(function(b) {
+                b.onclick = function() {
+                    ts = +b.dataset.s;
+                    apply()
+                }
+                });
+            apply();
+            // ページ内リンク: 開く
+            document.querySelectorAll('.toc a').forEach(function(a) {
+                a.addEventListener('click', function(e) {
+                    var d = document.querySelector(a.getAttribute('href'));
+                    if (d) {
+                        d.open = true
+                    }
+                    })
+                });
+            if (location.hash) {
+                var d = document.querySelector(location.hash);
+                if (d && d.tagName === 'DETAILS')d.open = true
+            }
+            })();
+    </script>
+    <script src="kamante-bgm.js" data-bottom="16px"></script>
+</body>
+</html>

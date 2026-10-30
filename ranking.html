@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>ランキング - かまんてびーと</title>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffc233;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Klee One',sans-serif;
+            color: #fff8e7;
+            min-height: 100vh;
+            background: linear-gradient(180deg,#070b24,#151a55 50%,#3a1d5c);
+        }
+        .hd {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+            background: rgba(10,10,40,.88);
+            border-bottom: 1px solid rgba(255,255,255,.15);
+        }
+        .bk {
+            padding: 7px 12px;
+            background: var(--gold);
+            color: #2b1d00;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .un {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .wrap {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top,0px) + 62px) 12px 40px;
+        }
+        h1 {
+            font: 900 30px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255,194,51,.6);
+            margin: 6px 0 10px;
+        }
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px 4px;
+            border-radius: 16px;
+            border: 2px solid #fff;
+            background: transparent;
+            color: #fff;
+            font: 600 15px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .tab.on {
+            background: var(--gold);
+            color: #2b1d00;
+            border-color: var(--gold);
+        }
+        .sub {
+            display: none;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .sub.on {
+            display: flex;
+        }
+        .chip {
+            flex: 1;
+            padding: 7px 4px;
+            border-radius: 14px;
+            border: 2px solid rgba(255,255,255,.5);
+            background: transparent;
+            color: #fff;
+            font: 600 14px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .chip.on {
+            background: #fff;
+            color: #2b1d3a;
+        }
+        .me {
+            background: linear-gradient(135deg,#c62828,#ff7043);
+            border: 2px solid #ffe08a;
+            border-radius: 20px;
+            padding: 12px 14px;
+            margin: 10px 0;
+            display: none;
+            box-shadow: 0 0 22px rgba(255,112,67,.5);
+        }
+        .me.on {
+            display: block;
+            animation: mi .5s cubic-bezier(.2,1.4,.4,1);
+        }
+        @keyframes mi {
+            from {
+                transform: scale(.8);
+                opacity: 0;
+            }
+        }
+        .me .r {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+        .me .l {
+            font-size: 13px;
+            opacity: .9;
+        }
+        .me .v {
+            font: 900 28px 'Zen Antique Soft',serif;
+        }
+        .me .g {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+        .pod {
+            display: grid;
+            grid-template-columns: 1fr 1.15fr 1fr;
+            gap: 8px;
+            align-items: end;
+            margin: 14px 0 12px;
+        }
+        .pd {
+            text-align: center;
+            border-radius: 18px 18px 8px 8px;
+            padding: 10px 4px;
+            border: 2px solid rgba(255,255,255,.4);
+            animation: up .6s cubic-bezier(.2,1.2,.4,1) backwards;
+        }
+        @keyframes up {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+        }
+        .pd.p1 {
+            background: linear-gradient(180deg,#ffd54f,#b8860b);
+            min-height: 150px;
+            order: 2;
+            box-shadow: 0 0 24px rgba(255,215,0,.6);
+        }
+        .pd.p2 {
+            background: linear-gradient(180deg,#e0e0e0,#757575);
+            min-height: 125px;
+            order: 1;
+        }
+        .pd.p3 {
+            background: linear-gradient(180deg,#e8a76f,#8d5524);
+            min-height: 110px;
+            order: 3;
+        }
+        .pd .md {
+            font-size: 34px;
+        }
+        .pd .nm {
+            font-size: 14px;
+            font-weight: 600;
+            word-break: break-all;
+            color: #2b1d00;
+        }
+        .pd .sc {
+            font: 900 17px 'Zen Antique Soft',serif;
+            color: #2b1d00;
+        }
+        .pd.me2 {
+            outline: 3px solid #fff;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 12px;
+            margin-bottom: 8px;
+            border-radius: 14px;
+            background: rgba(255,255,255,.1);
+            border: 2px solid rgba(255,255,255,.18);
+            animation: up .4s backwards;
+        }
+        .row.me2 {
+            border-color: var(--gold);
+            background: rgba(255,194,51,.22);
+            box-shadow: 0 0 14px rgba(255,194,51,.5);
+        }
+        .row .n {
+            font: 900 20px 'Zen Antique Soft',serif;
+            width: 42px;
+            text-align: center;
+        }
+        .row .pl {
+            flex: 1;
+            font-weight: 600;
+            font-size: 16px;
+            word-break: break-all;
+        }
+        .row .s {
+            font: 900 18px 'Zen Antique Soft',serif;
+            color: var(--gold);
+        }
+        .msg {
+            text-align: center;
+            padding: 36px 10px;
+            line-height: 1.8;
+            opacity: .9;
+        }
+        .conf {
+            position: fixed;
+            top: -40px;
+            font-size: 28px;
+            animation: fall linear forwards;
+            pointer-events: none;
+            z-index: 500;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+        body {
+            background-attachment: fixed;
+        }
+        .hd {
+            backdrop-filter: blur(8px);
+        }
+        /*device-fix*/
+        button,a {
+            touch-action: manipulation;
+        }
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        @supports (-webkit-touch-callout:none) {
+            * {
+                -webkit-backdrop-filter: none!important;
+                backdrop-filter: none!important;
+            }
+            body {
+                background-attachment: scroll!important;
+            }
+        }
+        /*tablet*/
+        @media(min-width:768px) {
+            .wrap {
+                zoom: 1.25;
+            }
+            .hd {
+                zoom: 1.1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hd">
+        <a class="bk" href="index.html">🏠 ホーム</a>
+        <div class="un">👤 <span id="username">ゲスト</span></div>
+    </div>
+    <div class="wrap">
+        <h1>🏆 ランキング</h1>
+        <div class="tabs">
+            <button class="tab on" id="tab-rhythm" onclick="sw('rhythm')">🎵 リズム</button>
+            <button class="tab" id="tab-run" onclick="sw('run')">🏃 ラン</button>
+            <button class="tab" id="tab-puzzle" onclick="sw('puzzle_easy')">🧩 パズル</button>
+        </div>
+        <div class="sub" id="sub">
+            <button class="chip" id="c-puzzle_easy" onclick="sw('puzzle_easy')">やさしい</button>
+            <button class="chip" id="c-puzzle_normal" onclick="sw('puzzle_normal')">ふつう</button>
+            <button class="chip" id="c-puzzle_hard" onclick="sw('puzzle_hard')">むずかしい</button>
+        </div>
+        <div class="me" id="me">
+            <div class="r">
+                <div>
+                    <div class="l">あなたの順位</div>
+                    <div class="v" id="myR">-</div>
+                </div>
+                <div>
+                    <div class="l" id="myL">スコア</div>
+                    <div class="v" id="myS">0</div>
+                </div>
+            </div>
+            <div class="g" id="myG"></div>
+        </div>
+        <div id="area">
+            <div class="msg">読み込み中...</div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
+    <script>
+        const supabaseUrl = 'https://lmfukinengwrfknbofqq.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtZnVraW5lbmd3cmZrbmJvZnFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1MjM3NTEsImV4cCI6MjA3ODA5OTc1MX0.YeViGgs1cHWVQfTXimwXN5brg-vxjRUQeacqDHz58TI';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+        const $ = id => document.getElementById(id);
+        const esc = v => String(v).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+        const uid = localStorage.getItem('sessionUserId');
+        const CFG = {
+            rhythm: {l: 'スコア', asc: false, fmt: v => v.toLocaleString() + '点'},
+            run: {l: 'スコア', asc: false, fmt: v => v.toLocaleString() + '点'},
+            puzzle_easy: {l: 'タイム', asc: true, fmt: t},
+            puzzle_normal: {l: 'タイム', asc: true, fmt: t},
+            puzzle_hard: {l: 'タイム', asc: true, fmt: t}
+        };
+
+        function t(s) {
+            s = Math.floor(s);
+            return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0')
+        }
+        let cur = 'rhythm', seq = 0;
+
+        function sw(g) {
+            cur = g;
+            const p = g.startsWith('puzzle_');
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+            $(p ? 'tab-puzzle' : 'tab-' + g).classList.add('on');
+            $('sub').classList.toggle('on', p);
+            document.querySelectorAll('.chip').forEach(b => b.classList.remove('on'));
+            if (p)$('c-' + g).classList.add('on');
+            $('myL').textContent = CFG[g].l;
+            load(g)
+        }
+        const medal = r => r === 1 ? '🥇' : r === 2 ? '🥈' : r === 3 ? '🥉' : r;
+
+        function confetti() {
+            const em = ['🎊', '⭐', '🏮', '✨'];
+            for (let i = 0; i < 30; i++) {
+                const e = document.createElement('div');
+                e.className = 'conf';
+                e.textContent = em[i % 4];
+                e.style.left = Math.random() * 100 + 'vw';
+                e.style.animationDuration = (2 + Math.random() * 2) + 's';
+                e.style.animationDelay = Math.random() * .8 + 's';
+                document.body.appendChild(e);
+                setTimeout(() => e.remove(), 5000)
+            }
+        }
+
+        async function load(g) {
+            const my = ++seq, c = CFG[g];
+            $('area').innerHTML = '<div class="msg">読み込み中...</div>';
+            $('me').classList.remove('on');
+            try {
+                const {data: rk, error} = await supabaseClient.from('game_rankings').select('*, users!inner(game_id)').eq('game_type', g).order('score', {ascending: c.asc}).limit(50);
+                if (my !== seq)return;
+                if (error) {
+                    $('area').innerHTML = `<div class="msg">ランキングを読み込めませんでした<br><small>${esc(error.message)}</small></div>`;
+                    return
+                }
+                if (!rk || !rk.length) {
+                    $('area').innerHTML = '<div class="msg">まだ記録がありません<br>いちばん乗りをめざそう！🏃</div>';
+                    return
+                }
+                const nm = x => esc(x.users.game_id) + (x.user_id === uid ? '(あなた)' : '');
+                const top = rk.slice(0, 3), rest = rk.slice(3);
+                let h = '<div class="pod">' + top.map((x, i) => `<div class="pd p${i + 1} ${x.user_id === uid ? 'me2' : ''}" style="animation-delay:${(2 - i) * .15}s"><div class="md">${medal(i + 1)}</div><div class="nm">${nm(x)}</div><div class="sc">${c.fmt(x.score)}</div></div>`).join('') + '</div>';
+                h += rest.map((x, i) => `<div class="row ${x.user_id === uid ? 'me2' : ''}" style="animation-delay:${Math.min(i * 30, 600)}ms"><div class="n">${i + 4}</div><div class="pl">${nm(x)}</div><div class="s">${c.fmt(x.score)}</div></div>`).join('');
+                $('area').innerHTML = h;
+                // 自分の順位
+                if (uid) {
+                    let idx = rk.findIndex(x => x.user_id === uid), rank = idx + 1, score = idx >= 0 ? rk[idx].score : null;
+                    if (idx < 0) {
+                        const {data: m} = await supabaseClient.from('game_rankings').select('score').eq('user_id', uid).eq('game_type', g).maybeSingle();
+                        if (m) {
+                            score = m.score;
+                            const q = supabaseClient.from('game_rankings').select('*', {count: 'exact', head: true}).eq('game_type', g);
+                            const {count} = await (c.asc ? q.lt('score', score) : q.gt('score', score));
+                            rank = (count || 0) + 1
+                        }
+                    }
+                    if (my !== seq)return;
+                    if (score != null) {
+                        $('myR').textContent = rank + '位';
+                        $('myS').textContent = c.fmt(score);
+                        let gap = '';
+                        if (rank === 1)gap = '👑 いま1位！すごい！'; else if (idx > 0) {
+                            const d = Math.abs(rk[idx - 1].score - score);
+                            gap = `ひとつ上まで あと ${c.asc ? d + '秒' : d.toLocaleString() + '点'}！`
+                        } else if (idx < 0 && rk.length) {
+                            gap = 'ランキング50位をめざそう！'
+                        }
+                        $('myG').textContent = gap;
+                        $('me').classList.add('on');
+                        if (rank <= 3) {
+                            confetti();
+                            if (navigator.vibrate)navigator.vibrate([40, 30, 80])
+                        }
+                    }
+                }
+            } catch (e) {
+                if (my === seq)$('area').innerHTML = '<div class="msg">エラーが発生しました</div>'
+            }
+        }
+        window.onload = () => {
+            const gid = localStorage.getItem('gameId');
+            if (gid && uid)$('username').textContent = gid; else $('username').textContent = localStorage.getItem('guestUsername') || 'ゲスト';
+            load(cur)
+        };
+    </script>
+    <script src="kamante-bgm.js" data-bottom="16px"></script>
+</body>
+</html>

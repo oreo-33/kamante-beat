@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キャラ育成 - かまんてびーと</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Klee One', cursive, sans-serif;
+            background: linear-gradient(135deg, #e0f7e0 0%, #f0f8e8 50%, #e8f0f8 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            padding: 8px 15px;
+            background: linear-gradient(145deg, #7fb069 0%, #a0d080 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            font-family: 'Klee One', cursive, sans-serif;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(145deg, #6a9c57 0%, #90c070 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-info {
+            font-size: 14px;
+            color: #2d5016;
+            font-weight: bold;
+        }
+
+        .container {
+            padding: 80px 15px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 28px;
+            color: #2d5016;
+            margin-bottom: 20px;
+            margin-top: 40px;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Zen Antique Soft', serif;
+            letter-spacing: 2px;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .divider {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #7fb069, transparent);
+            margin: 30px 0;
+            opacity: 0.5;
+        }
+
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .character-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .character-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .character-card.locked {
+            opacity: 0.6;
+            background: rgba(200, 200, 200, 0.5);
+        }
+
+        .character-card.selected {
+            border: 3px solid #7fb069;
+            box-shadow: 0 8px 25px rgba(127, 176, 105, 0.5);
+        }
+
+        .selected-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #7fb069 0%, #a0d080 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .character-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .character-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7fb069 0%, #a0d080 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .character-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .character-image span {
+            font-size: 40px;
+            z-index: 1;
+        }
+        
+        .character-image.placeholder {
+            font-size: 40px;
+        }
+
+        .character-info {
+            flex: 1;
+        }
+
+        .character-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2d5016;
+            margin-bottom: 5px;
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        .character-level {
+            font-size: 16px;
+            color: #5a8c4a;
+            font-weight: bold;
+        }
+
+        .exp-bar-container {
+            margin: 15px 0;
+        }
+
+        .exp-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .exp-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .exp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7fb069 0%, #a0d080 100%);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            background: rgba(127, 176, 105, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #5a8c4a;
+        }
+
+        .select-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Klee One', cursive, sans-serif;
+        }
+
+        .select-btn.active {
+            background: linear-gradient(135deg, #7fb069 0%, #a0d080 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(127, 176, 105, 0.3);
+        }
+
+        .select-btn.inactive {
+            background: #5a8c4a;
+            color: white;
+        }
+
+        .select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .select-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .locked-overlay {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+
+        .locked-overlay .lock-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .locked-message {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .school-character-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .school-char-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .school-char-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7fb069 0%, #a0d080 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+            border: 4px solid white;
+        }
+
+        .school-char-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .school-char-image span {
+            font-size: 60px;
+        }
+
+        .school-char-info {
+            flex: 1;
+        }
+
+        .school-char-name {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2d5016;
+            margin-bottom: 10px;
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        .school-char-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .detail-badge {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .detail-badge.gender {
+            background: linear-gradient(135deg, #7fb069 0%, #a0d080 100%);
+            color: white;
+        }
+
+        .detail-badge.personality {
+            background: linear-gradient(135deg, #5a8c4a 0%, #7fb069 100%);
+            color: white;
+        }
+
+        .detail-badge.club {
+            background: linear-gradient(135deg, #4a7a3f 0%, #5a8c4a 100%);
+            color: white;
+        }
+
+        .detail-badge.costume {
+            background: linear-gradient(135deg, #90c070 0%, #b0d890 100%);
+            color: white;
+        }
+
+        .detail-badge.title {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            color: #2d5016;
+        }
+
+        .school-stats-section {
+            margin-top: 20px;
+        }
+
+        .school-stats-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d5016;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        .school-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .school-stat-card {
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .school-stat-card.knowledge { background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%); }
+        .school-stat-card.focus { background: linear-gradient(135deg, #dcedc8 0%, #c5e1a5 100%); }
+        .school-stat-card.motivation { background: linear-gradient(135deg, #f1f8e9 0%, #dcedc8 100%); }
+        .school-stat-card.stamina { background: linear-gradient(135deg, #b2dfdb 0%, #80cbc4 100%); }
+        .school-stat-card.communication { background: linear-gradient(135deg, #c5cae9 0%, #9fa8da 100%); }
+
+        .school-stat-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .school-stat-label {
+            font-size: 13px;
+            color: #2d5016;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .school-stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .no-character-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #2d5016;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+
+        .no-character-message .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .create-character-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #7fb069 0%, #a0d080 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            font-family: 'Klee One', cursive, sans-serif;
+        }
+
+        .create-character-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-title {
+            font-size: 20px;
+            color: #2d5016;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: 'Zen Antique Soft', serif;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .gacha-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #7fb069 0%, #a0d080 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            font-family: 'Klee One', cursive, sans-serif;
+        }
+
+        .gacha-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .characters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .school-char-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .school-stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .school-char-details {
+                justify-content: center;
+            }
+        }
+    
+body{background:linear-gradient(180deg,#070b24,#151a55 50%,#3a1d5c)!important;}
+.header{background:rgba(10,10,40,.88)!important;border-bottom:1px solid rgba(255,255,255,.15)}
+.header-info{color:#ffc233!important}
+.section-title{color:#ffc233!important;text-shadow:0 0 20px rgba(255,194,51,.6)!important}
+.back-btn{background:#ffc233!important;color:#2b1d00!important;text-shadow:none}
+body{background-attachment:fixed!important}.header{backdrop-filter:blur(10px)}
+
+.character-image{background:linear-gradient(135deg,#ffe9a8,#ffd1a8)!important}
+.character-image img{object-fit:cover!important;object-position:50% 18%;transform:scale(1.55);transform-origin:50% 22%}
+/*device-fix*/
+button,a{touch-action:manipulation}
+html{-webkit-text-size-adjust:100%}
+@supports (-webkit-touch-callout:none){*{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}body{background-attachment:scroll!important}}
+/*tablet*/
+@media(min-width:768px){.container{zoom:1.15}.header{zoom:1.1}}
+</style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-btn">
+            ← ホーム
+        </a>
+        <div class="header-info">
+            キャラ数: <span id="characterCount">0</span>/5
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 戦闘用キャラクター -->
+        <h1 class="section-title">⚔️ 戦闘キャラ育成 ⚔️</h1>
+        <div id="charactersGrid" class="characters-grid"></div>
+
+        <div class="info-section">
+            <div class="info-title">💡 戦闘キャラについて</div>
+            <div class="info-text">
+                使用するキャラを選択してください!<br>
+                ゲームをプレイすると、選択中のキャラだけが経験値を獲得します。<br>
+                レベルが上がると、HP・攻撃力・防御力・かまんて力がアップ!<br>
+                強いキャラを育てて、歴史モードのボスに挑戦しよう!
+            </div>
+            <a href="gacha.html" class="gacha-link">🥁 福引で新しいなかまをゲット</a>
+            <a href="collection.html" class="gacha-link" style="margin-top:10px">🙏 おたからをほうのうして経験値アップ</a>
+        </div>
+
+    </div>
+
+    <script>
+        // キャラクター画像のマッピング
+        const characterImages = {
+            1: 'illust/chars/char1.svg',
+            2: 'gacha/character2.webp',
+            3: 'gacha/character3.webp',
+            4: 'gacha/character4.webp',
+            5: 'gacha/character5.webp'
+        };
+
+        const characterNames = {
+            1: 'たまりくん',
+            2: 'かまたろう',
+            3: 'さくらちゃん',
+            4: 'ともりん',
+            5: 'KJラビット'
+        };
+
+        const characterEmojis = {
+            1: '👦',
+            2: '👦',
+            3: '👧',
+            4: '🧚',
+            5: '🐰'
+        };
+
+        // 性別による画像
+        const genderImages = {
+            '男': 'kamante-school/boy.webp',
+            '女': 'kamante-school/girl.webp'
+        };
+
+        const genderEmojis = {
+            '男': '👦',
+            '女': '👧'
+        };
+
+        // 必要経験値を大幅削減（5 * 1.015^(level-1)に変更）
+        function getRequiredExp(level) {
+            if (level >= 999) return 0;
+            return Math.floor(5 * Math.pow(1.015, level - 1));
+        }
+
+        function levelUpCharacter(character) {
+            let levelsGained = 0;
+            
+            while (character.level < 999) {
+                const requiredExp = getRequiredExp(character.level);
+                if (character.exp >= requiredExp) {
+                    character.exp -= requiredExp;
+                    character.level++;
+                    levelsGained++;
+                    
+                    if (character.id === 1) {
+                        character.maxHp += 8;
+                        character.hp = character.maxHp;
+                        character.attack += 2;
+                        character.defense += 2;
+                        character.kamante += 2;
+                    } else if (character.id === 2) {
+                        character.maxHp += 9;
+                        character.hp = character.maxHp;
+                        character.attack += 2;
+                        character.defense += 3;
+                        character.kamante += 2;
+                    } else if (character.id === 3) {
+                        character.maxHp += 7;
+                        character.hp = character.maxHp;
+                        character.attack += 3;
+                        character.defense += 2;
+                        character.kamante += 3;
+                    } else if (character.id === 4) {
+                        character.maxHp += 6;
+                        character.hp = character.maxHp;
+                        character.attack += 2;
+                        character.defense += 2;
+                        character.kamante += 4;
+                    } else if (character.id === 5) {
+                        character.maxHp += 12;
+                        character.hp = character.maxHp;
+                        character.attack += 4;
+                        character.defense += 4;
+                        character.kamante += 4;
+                    }
+                } else {
+                    break;
+                }
+            }
+            
+            return levelsGained;
+        }
+
+        function getSelectedCharacterId() {
+            return parseInt(localStorage.getItem('selectedCharacterId')) || 1;
+        }
+
+        function setSelectedCharacterId(charId) {
+            localStorage.setItem('selectedCharacterId', charId);
+            renderCharacters();
+        }
+
+        function loadCharacters() {
+            let characters = JSON.parse(localStorage.getItem('characters')) || [];
+            
+            if (!characters.find(c => c.id === 1)) {
+                characters.push({
+                    id: 1,
+                    name: 'たまりくん',
+                    level: 1,
+                    exp: 0,
+                    hp: 100,
+                    maxHp: 100,
+                    attack: 10,
+                    defense: 5,
+                    kamante: 8,
+                    image: 'illust/chars/char1.svg'
+                });
+            }
+            
+            let renamed = false;
+            characters.forEach(char => {
+                if (characterImages[char.id]) {
+                    char.image = characterImages[char.id];
+                }
+                if (characterNames[char.id] && char.name !== characterNames[char.id]) {
+                    char.name = characterNames[char.id];
+                    renamed = true;
+                }
+            });
+            if (renamed) saveCharacters(characters);
+            
+            return characters;
+        }
+
+        function saveCharacters(characters) {
+            localStorage.setItem('characters', JSON.stringify(characters));
+        }
+
+        function renderCharacters() {
+            const container = document.getElementById('charactersGrid');
+            let characters = loadCharacters();
+            
+            const selectedCharId = getSelectedCharacterId();
+            const selectedChar = characters.find(c => c.id === selectedCharId);
+            
+            if (selectedChar) {
+                const levelsGained = levelUpCharacter(selectedChar);
+                if (levelsGained > 0) {
+                    saveCharacters(characters);
+                }
+            }
+            
+            document.getElementById('characterCount').textContent = characters.length;
+            
+            container.innerHTML = '';
+            
+            const doumiya = characters.find(c => c.id === 1) || {
+                id: 1,
+                name: 'たまりくん',
+                level: 1,
+                exp: 0,
+                hp: 100,
+                maxHp: 100,
+                attack: 10,
+                defense: 5,
+                kamante: 8,
+                image: 'illust/chars/char1.svg'
+            };
+            
+            renderCharacterCard(doumiya, container, selectedCharId);
+            
+            for (let i = 2; i <= 5; i++) {
+                const char = characters.find(c => c.id === i);
+                if (char) {
+                    renderCharacterCard(char, container, selectedCharId);
+                } else {
+                    renderLockedCard(i, container);
+                }
+            }
+
+        }
+
+        function renderCharacterCard(character, container, selectedCharId) {
+            const card = document.createElement('div');
+            const isSelected = character.id === selectedCharId;
+            card.className = 'character-card' + (isSelected ? ' selected' : '');
+            
+            const requiredExp = getRequiredExp(character.level);
+            const expPercent = character.level >= 999 ? 100 : (character.exp / requiredExp) * 100;
+            
+            const timestamp = Date.now();
+            const imagePath = 'illust/chars/char' + character.id + '.svg';
+            const oldPath = character.image + '?v=' + timestamp;
+            const fallbackEmoji = characterEmojis[character.id] || '👤';
+            
+            card.innerHTML = `
+                ${isSelected ? '<div class="selected-badge">✨ 使用中</div>' : ''}
+                <div class="character-header">
+                    <div class="character-image" id="charImg${character.id}">
+                        <img src="${imagePath}" data-old="${oldPath}"
+                             alt="${character.name}" 
+                             style="display:none;"
+                             onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
+                             onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.old}else{this.style.display='none';this.nextElementSibling.style.display='block'}">
+                        <span style="display:none;">${fallbackEmoji}</span>
+                    </div>
+                    <div class="character-info">
+                        <div class="character-name">${character.name}</div>
+                        <div class="character-level">Lv.${character.level}</div>
+                    </div>
+                </div>
+                
+                <div class="exp-bar-container">
+                    <div class="exp-label">
+                        <span>EXP</span>
+                        <span>${character.level >= 999 ? 'MAX' : character.exp + ' / ' + requiredExp}</span>
+                    </div>
+                    <div class="exp-bar">
+                        <div class="exp-fill" style="width: ${expPercent}%">
+                            ${expPercent > 20 ? Math.floor(expPercent) + '%' : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">❤️ HP</span>
+                        <span class="stat-value">${character.hp}/${character.maxHp}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">⚔️ 攻撃力</span>
+                        <span class="stat-value">${character.attack}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🛡️ 防御力</span>
+                        <span class="stat-value">${character.defense}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">✨ かまんて力</span>
+                        <span class="stat-value">${character.kamante}</span>
+                    </div>
+                </div>
+                
+                <button class="select-btn ${isSelected ? 'active' : 'inactive'}" 
+                        onclick="setSelectedCharacterId(${character.id})"
+                        ${isSelected ? 'disabled' : ''}>
+                    ${isSelected ? '✨ 使用中' : 'このキャラを使う'}
+                </button>
+            `;
+            
+            container.appendChild(card);
+        }
+
+        function renderLockedCard(id, container) {
+            const card = document.createElement('div');
+            card.className = 'character-card locked';
+            
+            card.innerHTML = `
+                <div class="locked-overlay">
+                    <div class="lock-icon">🔒</div>
+                    <div class="character-name">${characterNames[id]}</div>
+                    <div class="locked-message">
+                        福引でレジェンドを引いて<br>
+                        このキャラを仲間にしよう!
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        }
+
+        function renderSchoolCharacter() {
+            const container = document.getElementById('schoolCharacterSection');
+            const schoolChar = JSON.parse(localStorage.getItem('kamanteCharacter'));
+            
+            if (!schoolChar) {
+                container.innerHTML = `
+                    <div class="no-character-message">
+                        <div class="icon">🎓</div>
+                        <div>学校用キャラクターがまだ作成されていません</div>
+                        <div style="font-size: 14px; margin-top: 10px; opacity: 0.8;">
+                            学校モードでキャラクターを作成してください
+                        </div>
+                        <a href="kamante-school/index.html" class="create-character-btn">🏫 学校モードへ</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // 装備中の称号を取得
+            const equippedTitle = localStorage.getItem('equippedTitle') || '';
+
+            // 性格名マッピング
+            const personalityNames = {
+                'serious': 'まじめ',
+                'energetic': '元気',
+                'shy': '内気',
+                'artistic': '芸術肌',
+                'genius': '天才肌',
+                'kamante': 'かまんて'
+            };
+
+            // 部活名マッピング
+            const clubNames = {
+                'soccer': 'サッカー部',
+                'basketball': 'バスケ部',
+                'art': '美術部',
+                'kamante': 'かまんて部'
+            };
+
+            const genderImage = genderImages[schoolChar.gender] || '';
+            const genderEmoji = genderEmojis[schoolChar.gender] || '👤';
+
+            container.innerHTML = `
+                <div class="school-character-card">
+                    <div class="school-char-header">
+                        <div class="school-char-image">
+                            <img src="${genderImage}" 
+                                 alt="${schoolChar.name}"
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<span>${genderEmoji}</span>';">
+                        </div>
+                        <div class="school-char-info">
+                            <div class="school-char-name">${schoolChar.name}</div>
+                            <div class="school-char-details">
+                                <div class="detail-badge gender">
+                                    ${schoolChar.gender === '男' ? '👦' : '👧'} ${schoolChar.gender}の子
+                                </div>
+                                <div class="detail-badge personality">
+                                    💫 ${personalityNames[schoolChar.personality] || schoolChar.personality}
+                                </div>
+                                <div class="detail-badge club">
+                                    ⚽ ${clubNames[schoolChar.club] || schoolChar.club}
+                                </div>
+                                <div class="detail-badge costume">
+                                    👔 ${schoolChar.costume}
+                                </div>
+                                ${equippedTitle ? `
+                                <div class="detail-badge title">
+                                    👑 ${equippedTitle}
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="school-stats-section">
+                        <div class="school-stats-title">📊 学校ステータス</div>
+                        <div class="school-stats-grid">
+                            <div class="school-stat-card knowledge">
+                                <div class="school-stat-icon">🧠</div>
+                                <div class="school-stat-label">知力</div>
+                                <div class="school-stat-value">${schoolChar.stats.knowledge.toFixed(2)}</div>
+                            </div>
+                            <div class="school-stat-card focus">
+                                <div class="school-stat-icon">⭐</div>
+                                <div class="school-stat-label">集中力</div>
+                                <div class="school-stat-value">${schoolChar.stats.focus.toFixed(2)}</div>
+                            </div>
+                            <div class="school-stat-card motivation">
+                                <div class="school-stat-icon">❤️</div>
+                                <div class="school-stat-label">やる気</div>
+                                <div class="school-stat-value">${schoolChar.stats.motivation.toFixed(2)}</div>
+                            </div>
+                            <div class="school-stat-card stamina">
+                                <div class="school-stat-icon">⚡</div>
+                                <div class="school-stat-label">体力</div>
+                                <div class="school-stat-value">${schoolChar.stats.stamina.toFixed(2)}</div>
+                            </div>
+                            <div class="school-stat-card communication">
+                                <div class="school-stat-icon">💥</div>
+                                <div class="school-stat-label">コミュ力</div>
+                                <div class="school-stat-value">${schoolChar.stats.communication.toFixed(2)}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-title">💡 学校キャラについて</div>
+                    <div class="info-text">
+                        このキャラが学校モードで活躍します!<br>
+                        学校モードでイベントをクリアしてステータスを上げよう!<br>
+                        コレクション画面でアイテムを使うと、さらにステータスがアップ!<br>
+                        ステータスが高いほど、イベントが成功しやすくなります!
+                    </div>
+                    <a href="kamante-school/index.html" class="gacha-link">🏫 学校モードへ</a>
+                    <a href="collection.html" class="gacha-link" style="background: linear-gradient(135deg, #5a8c4a 0%, #7fb069 100%); margin-top: 10px;">📦 コレクションでアイテム使用</a>
+                </div>
+            `;
+        }
+
+        window.addEventListener('load', () => {
+            renderCharacters();
+        });
+
+        window.addEventListener('focus', () => {
+            renderCharacters();
+        });
+    </script>
+<script src="kamante-bgm.js" data-bottom="16px"></script>
+</body>
+</html>

@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>かまんてびーと</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffc233;
+            --ink: #fff8e7;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        html,body {
+            height: 100%;
+        }
+        body {
+            font-family: 'Klee One',cursive,sans-serif;
+            color: var(--ink);
+            background: linear-gradient(180deg,#070b24 0%,#151a55 50%,#3a1d5c 100%);
+            overflow: hidden;
+        }
+        #sky {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #fff;
+            animation: tw 3s ease-in-out infinite;
+        }
+        @keyframes tw {
+            50% {
+                opacity: .15;
+                transform: scale(.6);
+            }
+        }
+        .petal {
+            position: absolute;
+            top: -20px;
+            width: 10px;
+            height: 8px;
+            border-radius: 70% 0 70% 0;
+            background: rgba(255,183,205,.8);
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to {
+                transform: translate(60px,110vh) rotate(540deg);
+            }
+        }
+        .wrap {
+            position: relative;
+            height: 100dvh;
+            max-width: 540px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: calc(env(safe-area-inset-top,0px) + 8px) 12px calc(env(safe-area-inset-bottom,0px) + 8px);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 16px;
+            padding: 7px 10px;
+            flex: none;
+        }
+        .user {
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            line-height: 1.2;
+            min-width: 0;
+        }
+        .title-display {
+            font-size: 12px;
+            color: var(--gold);
+            cursor: pointer;
+            font-weight: 400;
+        }
+        .rt {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .chip {
+            background: rgba(0,0,0,.3);
+            border-radius: 12px;
+            padding: 3px 10px;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .sbtn {
+            padding: 6px 10px;
+            background: var(--gold);
+            color: #2b1d00;
+            border: 0;
+            border-radius: 11px;
+            font: 600 12px 'Klee One',sans-serif;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .hero {
+            position: relative;
+            flex: none;
+            height: clamp(140px,27dvh,250px);
+            margin: 0 -12px;
+            overflow: hidden;
+            border-bottom: 3px solid var(--gold);
+            box-shadow: 0 10px 26px rgba(0,0,0,.55),0 0 30px rgba(255,194,51,.35);
+            background: #000;
+        }
+        .hero img {
+            will-change: transform;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 60% 30%;
+            transform-origin: 72% 40%;
+            animation: kb 16s ease-in-out infinite alternate;
+        }
+        @keyframes kb {
+            to {
+                transform: scale(1.07);
+            }
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 35%;
+            height: 100%;
+            background: linear-gradient(100deg,transparent,rgba(255,255,255,.2),transparent);
+            transform: translateX(-120%) skewX(-20deg);
+            animation: shine 5s infinite;
+            pointer-events: none;
+            will-change: transform;
+        }
+        @keyframes shine {
+            0% {
+                transform: translateX(-120%) skewX(-20deg);
+            }
+            60%,100% {
+                transform: translateX(340%) skewX(-20deg);
+            }
+        }
+        .hero .fb {
+            display: none;
+            font: 900 40px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            text-align: center;
+            padding-top: 40px;
+            text-shadow: 0 0 24px rgba(255,194,51,.65);
+        }
+        .hero.noimg img {
+            display: none;
+        }
+        .hero.noimg .fb {
+            display: block;
+        }
+        .lanterns {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 56%;
+            display: flex;
+            justify-content: space-around;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .lanterns::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #6d4c41;
+        }
+        .ln {
+            width: 24px;
+            height: 32px;
+            margin-top: 2px;
+            border-radius: 50%/45%;
+            background: radial-gradient(circle at 40% 35%,#ffe0a3,#ff7043 55%,#c62828);
+            box-shadow: 0 0 18px rgba(255,152,0,.8);
+            transform-origin: 50% -4px;
+            animation: sway 3s ease-in-out infinite alternate;
+        }
+        .ln:nth-child(even) {
+            animation-delay: -1.5s;
+            height: 28px;
+        }
+        @keyframes sway {
+            from {
+                transform: rotate(-7deg);
+            }
+            to {
+                transform: rotate(7deg);
+            }
+        }
+        .sp {
+            position: absolute;
+            bottom: -10px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #ffd54f;
+            box-shadow: 0 0 8px #ffc233;
+            animation: rise 4s linear infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes rise {
+            to {
+                transform: translateY(-200px);
+                opacity: 0;
+            }
+        }
+        .rib {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            padding: 18px 12px 6px;
+            background: linear-gradient(transparent,rgba(0,0,0,.85));
+            font-size: 12.5px;
+            line-height: 1.5;
+            cursor: pointer;
+            transition: opacity .3s;
+        }
+        .rib b {
+            color: var(--gold);
+        }
+        .cta {
+            flex: 1 1 auto;
+            min-height: 150px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            text-decoration: none;
+            color: #fff;
+            text-align: center;
+            padding: 12px;
+            border-radius: 24px;
+            background: linear-gradient(135deg,#c62828,#ff7043 60%,#ffb300);
+            border: 3px solid #ffe08a;
+            box-shadow: 0 8px 0 #7f1d1d,0 14px 26px rgba(0,0,0,.45),0 0 28px rgba(255,152,0,.5);
+            animation: pls 2s ease-in-out infinite;
+            margin-bottom: 6px;
+            will-change: transform;
+        }
+        .cta:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #7f1d1d;
+        }
+        @keyframes pls {
+            50% {
+                box-shadow: 0 8px 0 #7f1d1d,0 14px 26px rgba(0,0,0,.45),0 0 46px rgba(255,170,40,.95);
+            }
+        }
+        .cta::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);
+            transform: translateX(-120%) skewX(-20deg);
+            animation: shine 3.2s infinite;
+            will-change: transform;
+        }
+        .tag {
+            background: #ffeb3b;
+            color: #b71c1c;
+            font-weight: 600;
+            font-size: 12px;
+            border-radius: 10px;
+            padding: 1px 10px;
+        }
+        .cta .tt {
+            font: 900 30px 'Zen Antique Soft',serif;
+            text-shadow: 0 3px 0 rgba(0,0,0,.35);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cta .tt span {
+            font-size: 40px;
+        }
+        .cta .ds {
+            font-size: 14px;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .stats span {
+            background: rgba(0,0,0,.3);
+            border-radius: 10px;
+            padding: 2px 9px;
+            font-size: 13px;
+        }
+        .go {
+            background: #fff;
+            color: #c62828;
+            font: 900 22px 'Klee One',sans-serif;
+            border-radius: 28px;
+            padding: 6px 36px;
+            margin-top: 2px;
+        }
+        .mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            flex: none;
+        }
+        .mc {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #fff;
+            padding: 10px;
+            border-radius: 18px;
+            border: 2px solid rgba(255,255,255,.35);
+            box-shadow: 0 5px 0 rgba(0,0,0,.35);
+        }
+        .mc:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 rgba(0,0,0,.35);
+        }
+        .mc.run {
+            background: linear-gradient(145deg,#1565c0,#42a5f5);
+        }
+        .mc.puz {
+            background: linear-gradient(145deg,#2e7d32,#9ccc65);
+        }
+        .mc .ic {
+            font-size: 34px;
+        }
+        .mc .tt {
+            font: 900 16px 'Zen Antique Soft',serif;
+            line-height: 1.2;
+        }
+        .mc .bs {
+            font-size: 11.5px;
+            opacity: .95;
+            margin-top: 2px;
+        }
+        .dock {
+            flex: none;
+            display: grid;
+            grid-template-columns: repeat(5,1fr);
+            gap: 4px;
+            background: rgba(255,255,255,.12);
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 20px;
+            padding: 6px;
+        }
+        .dk {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            border: 0;
+            background: transparent;
+            color: #fff;
+            font: 600 11.5px 'Klee One',sans-serif;
+            padding: 5px 0;
+            border-radius: 14px;
+            cursor: pointer;
+        }
+        .dk .ic {
+            font-size: 26px;
+        }
+        .dk:active {
+            background: rgba(255,194,51,.35);
+            transform: scale(.94);
+        }
+        #sheet {
+            position: fixed;
+            inset: 0;
+            z-index: 150;
+            background: rgba(0,0,0,.6);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        #sheet.on {
+            display: flex;
+        }
+        .sh {
+            width: 100%;
+            max-width: 540px;
+            background: #1c1f5a;
+            border-top: 3px solid var(--gold);
+            border-radius: 26px 26px 0 0;
+            padding: 18px 16px calc(env(safe-area-inset-bottom,0px) + 18px);
+            animation: up .25s ease-out;
+        }
+        @keyframes up {
+            from {
+                transform: translateY(100%);
+            }
+        }
+        .sh h3 {
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 12px;
+            font-size: 19px;
+        }
+        .sg {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .sg button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            min-height: 68px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-radius: 18px;
+            background: rgba(255,255,255,.1);
+            color: #fff;
+            font: 600 17px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .sg button span {
+            font-size: 30px;
+        }
+        .sg button:active {
+            background: rgba(255,194,51,.35);
+        }
+        .sh .cl {
+            width: 100%;
+            margin-top: 12px;
+            padding: 12px;
+            border: 0;
+            border-radius: 14px;
+            background: #ddd;
+            color: #444;
+            font: 600 16px 'Klee One',sans-serif;
+        }
+        .msg {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,.85);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            z-index: 1000;
+            display: none;
+            animation: fio 2s ease-in-out;
+            font-weight: 600;
+        }
+        @keyframes fio {
+            0%,100% {
+                opacity: 0;
+            }
+            10%,90% {
+                opacity: 1;
+            }
+        }
+        #loginModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .md {
+            background: #1c1f5a;
+            border: 2px solid var(--gold);
+            padding: 26px;
+            border-radius: 22px;
+            max-width: 350px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        }
+        .md h3 {
+            text-align: center;
+            margin-bottom: 16px;
+            color: var(--gold);
+            font-size: 22px;
+        }
+        .md input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            font: 16px 'Klee One',sans-serif;
+            background: #fff;
+            color: #222;
+        }
+        .md .r {
+            display: flex;
+            gap: 10px;
+            margin: 6px 0 10px;
+        }
+        .md button {
+            flex: 1;
+            padding: 12px;
+            border: 0;
+            border-radius: 12px;
+            font: 600 16px 'Klee One',sans-serif;
+            cursor: pointer;
+        }
+        .dk {
+            position: relative;
+            line-height: 1.15;
+            text-align: center;
+        }
+        .dot {
+            position: absolute;
+            top: 1px;
+            right: calc(50% - 22px);
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #e53935;
+            box-shadow: 0 0 8px #e53935;
+            display: none;
+        }
+        .dot2 {
+            display: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e53935;
+            box-shadow: 0 0 8px #e53935;
+            margin-left: 4px;
+        }
+        .dm {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.72);
+            z-index: 180;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .dm.on {
+            display: flex;
+        }
+        .dc {
+            width: min(94vw,400px);
+            background: linear-gradient(160deg,#2a1f6a,#1c1f5a);
+            border: 3px solid var(--gold);
+            border-radius: 24px;
+            padding: 20px 16px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255,194,51,.5);
+            animation: dpop .4s cubic-bezier(.2,1.4,.4,1);
+        }
+        @keyframes dpop {
+            from {
+                transform: scale(.6);
+                opacity: 0;
+            }
+        }
+        .dc h3 {
+            font: 900 24px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .dsub {
+            font-size: 14px;
+            opacity: .9;
+            margin-bottom: 12px;
+        }
+        .dgrid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+        .ds1 {
+            width: 76px;
+            height: 76px;
+            border-radius: 18px;
+            border: 2px solid rgba(255,255,255,.3);
+            background: rgba(255,255,255,.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            position: relative;
+        }
+        .ds1 b {
+            font-size: 20px;
+            line-height: 1.1;
+        }
+        .ds1.done {
+            background: rgba(255,194,51,.25);
+            border-color: var(--gold);
+        }
+        .ds1.done::after {
+            content: '✅';
+            position: absolute;
+            top: -8px;
+            right: -6px;
+            font-size: 20px;
+        }
+        .ds1.today {
+            border-color: #ff7043;
+            box-shadow: 0 0 18px #ff7043;
+            animation: tdy 1s ease-in-out infinite alternate;
+        }
+        @keyframes tdy {
+            50% {
+                box-shadow: 0 0 30px #ff7043;
+            }
+        }
+        .ds1.big {
+            width: 164px;
+            background: linear-gradient(135deg,rgba(255,112,67,.3),rgba(255,194,51,.3));
+        }
+        .dcl {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            border: 0;
+            border-radius: 16px;
+            background: linear-gradient(135deg,#ff8a65,#e53935);
+            color: #fff;
+            font: 600 20px 'Klee One',sans-serif;
+            box-shadow: 0 5px 0 #8e1a1a;
+            margin-bottom: 8px;
+        }
+        .dcl:disabled {
+            filter: grayscale(1);
+            opacity: .5;
+            box-shadow: none;
+        }
+        .dcl.g {
+            background: transparent;
+            border: 2px solid #fff;
+            box-shadow: none;
+            font-size: 16px;
+            padding: 9px;
+        }
+        @media(max-height:620px) {
+            .cta .ds {
+                display: none;
+            }
+            .cta .tt {
+                font-size: 24px;
+            }
+            .hero {
+                height: 120px;
+            }
+        }
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                animation: none!important;
+            }
+        }
+
+        /*device-fix*/
+        button,a {
+            touch-action: manipulation;
+        }
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        @supports (-webkit-touch-callout:none) {
+            * {
+                -webkit-backdrop-filter: none!important;
+                backdrop-filter: none!important;
+            }
+            body {
+                background-attachment: scroll!important;
+            }
+        }
+        /*tablet*/
+        @media(min-width:700px) {
+            .wrap {
+                max-width: 780px;
+                gap: 14px;
+            }
+            .hero {
+                height: clamp(240px,34dvh,430px);
+            }
+            .cta {
+                min-height: 240px;
+                gap: 8px;
+            }
+            .cta .tt {
+                font-size: 42px;
+            }
+            .cta .tt span {
+                font-size: 54px;
+            }
+            .cta .ds {
+                font-size: 18px;
+            }
+            .tag {
+                font-size: 15px;
+            }
+            .go {
+                font-size: 28px;
+                padding: 8px 48px;
+            }
+            .stats span {
+                font-size: 16px;
+            }
+            .mini {
+                gap: 14px;
+            }
+            .mc {
+                padding: 16px;
+                gap: 12px;
+            }
+            .mc .ic {
+                font-size: 44px;
+            }
+            .mc .tt {
+                font-size: 22px;
+            }
+            .mc .bs {
+                font-size: 15px;
+            }
+            .dock {
+                padding: 8px;
+            }
+            .dk {
+                font-size: 15px;
+            }
+            .dk .ic {
+                font-size: 36px;
+            }
+            .rib {
+                font-size: 16px;
+                padding: 22px 16px 8px;
+            }
+            .top {
+                padding: 10px 14px;
+            }
+            .user {
+                font-size: 19px;
+            }
+            .chip {
+                font-size: 16px;
+            }
+            .sbtn {
+                font-size: 15px;
+                padding: 8px 14px;
+            }
+        }
+        @media(min-width:700px) and (max-height:760px) {
+            .hero {
+                height: clamp(150px,28dvh,260px);
+            }
+            .cta {
+                min-height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="sky"></div>
+    <div class="msg" id="statusMessage"></div>
+    <div id="loginModal">
+        <div class="md">
+            <h3>アカウント</h3>
+            <input type="text" id="modalUsername" placeholder="ニックネーム(本名はNG)" maxlength="16" autocomplete="username">
+  <input type="password" id="modalPassword" placeholder="パスワード" autocomplete="current-password">
+            <div style="font-size:12px;opacity:.85;margin:-2px 0 8px;line-height:1.5">⚠️ ランキングに名前が出ます。本名や学校名は入れないでね。パスワードは忘れないようにメモしてね。</div>
+            <div class="r">
+                <button onclick="registerUserModal()" style="background:#ffc233;color:#2b1d00">新規登録</button>
+                <button onclick="loginUserModal()" style="background:#e63946;color:#fff">ログイン</button>
+            </div>
+            <button onclick="closeLoginModal()" style="width:100%;background:#ddd;color:#555">閉じる</button>
+        </div>
+    </div>
+    <div id="sheet" onclick="if(event.target===this)closeSheet()">
+        <div class="sh">
+            <h3>✨ もっと楽しむ</h3>
+            <div class="sg">
+                <button onclick="closeSheet();openDaily()"><span>📅</span>きょうのごほうび<i class="dot2" id="dailyDot"></i></button>
+                <button onclick="openMission()" id="missionBtn"><span>🎯</span>ミッション</button>
+                <button onclick="openCollection()" id="collectionBtn"><span>📚</span>おたから図鑑</button>
+                <button onclick="openPractice()" id="practiceBtn"><span>🎬</span>練習動画</button>
+                <button onclick="openGuide()"><span>📖</span>説明</button>
+                <button onclick="cycleSize()"><span>🔠</span>文字の大きさ</button>
+            </div>
+            <button class="cl" onclick="closeSheet()">とじる</button>
+        </div>
+    </div>
+    <div id="daily" class="dm" onclick="if(event.target===this)closeDaily()">
+        <div class="dc">
+            <h3>📅 きょうのごほうび</h3>
+            <div class="dsub" id="dsub"></div>
+            <div class="dgrid" id="dgrid"></div>
+            <button class="dcl" id="dclaim" onclick="claimDaily()">🎁 うけとる！</button>
+  <button class="dcl g" onclick="closeDaily()">とじる</button>
+        </div>
+    </div>
+    <div class="wrap" id="wrap">
+        <div class="top">
+            <div class="user" onclick="handleUsernameClick()">
+                👤 <span id="username">ゲスト</span>
+                <div class="title-display" id="titleDisplay" style="display:none" onclick="event.stopPropagation();openCollection()"></div>
+            </div>
+            <div class="rt">
+                <span class="chip">🎫 <span id="ticketCount">0</span></span>
+                <button class="sbtn" onclick="showLoginModal()" id="loginModalBtn">ログイン</button>
+                <button class="sbtn" onclick="confirmDeleteAccount()" id="deleteAccountBtn" style="background:#dc3545;color:#fff;display:none">退会</button>
+            </div>
+        </div>
+        <div class="hero" id="hero">
+            <img id="heroImg" alt="かまんてびーと" decoding="async">
+            <div class="fb">かまんてびーと</div>
+            <div class="lanterns">
+                <i class="ln"></i>
+                <i class="ln"></i>
+                <i class="ln"></i>
+                <i class="ln"></i>
+            </div>
+            <div class="rib" id="rib" onclick="nextTrivia()"><b>💡 </b><span id="triviaText"></span></div>
+        </div>
+        <a class="cta" href="game.html" id="gameBtn">
+            <span class="tag">いちばんのおすすめ</span>
+            <div class="tt">
+                <span>🥁</span>
+                かまんてリズム
+            </div>
+            <div class="ds">踊りを見ながら、リズムに合わせてタップ！</div>
+            <div class="stats">
+                <span>ベスト <b id="rhBest">0</b>点</span>
+                <span>あそんだ <b id="rhPlay">0</b>回</span>
+                <span>🏅 <b id="bdCount">0</b>/20</span>
+            </div>
+            <div class="go">▶ あそぶ</div>
+        </a>
+        <div class="mini">
+            <a class="mc run" href="run-game.html">
+                <div class="ic">🏃</div>
+                <div>
+                    <div class="tt">かまんてラン</div>
+                    <div class="bs" id="runBest">ベスト 0点</div>
+                </div>
+            </a>
+            <a class="mc puz" href="puzzle-game.html">
+                <div class="ic">🧩</div>
+                <div>
+                    <div class="tt">かまんてパズル</div>
+                    <div class="bs" id="puzBest">さいそく --:--</div>
+                </div>
+            </a>
+        </div>
+        <div class="dock">
+            <button class="dk" onclick="openGacha()" id="gachaBtn"><span class="ic">🥁</span>福引</button>
+            <button class="dk" onclick="openCharacters()" id="charBtn"><span class="ic">🌱</span>育成</button>
+            <button class="dk" onclick="openHistory()"><span class="ic">🗺️</span>歴史</button>
+            <button class="dk" onclick="openRanking()" id="rankingBtn"><span class="ic">🏆</span>ランキング</button>
+            <button class="dk" onclick="openSheet()"><span class="ic">✨</span>もっと<i class="dot" id="moreDot"></i></button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
+    <script>
+        const supabaseUrl = 'https://lmfukinengwrfknbofqq.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtZnVraW5lbmd3cmZrbmJvZnFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1MjM3NTEsImV4cCI6MjA3ODA5OTc1MX0.YeViGgs1cHWVQfTXimwXN5brg-vxjRUQeacqDHz58TI';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+        let currentUserId = null;
+        const DOMAIN = '@game.local';
+
+        function showMessage(message) {
+            const msg = document.getElementById('statusMessage');
+            msg.textContent = message;
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+                }, 2000);
+        }
+
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function openGuide() {
+            window.location.href = 'guide.html';
+        }
+
+        function openPractice() {
+            window.location.href = 'rennsyuu.html';
+        }
+
+        function openRanking() {
+            window.location.href = 'ranking.html';
+        }
+
+        function openGame() {
+            window.location.href = 'game-select.html';
+        }
+
+        function openGacha() {
+            window.location.href = 'gacha.html';
+        }
+
+        function openCollection() {
+            window.location.href = 'collection.html';
+        }
+
+        function openMission() {
+            window.location.href = 'mission.html';
+        }
+
+        function openHistory() {
+            window.location.href = 'history.html';
+        }
+
+        function openCharacters() {
+            window.location.href = 'characters.html';
+        }
+
+        function updateTitleDisplay() {
+            const equippedTitle = localStorage.getItem('equippedTitle') || '';
+            const display = document.getElementById('titleDisplay');
+            if (equippedTitle && equippedTitle !== 'null' && equippedTitle !== '""') {
+                const title = equippedTitle.replace(/"/g, '');
+                display.textContent = '👑 ' + title;
+                display.style.display = 'block';
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
+        function updateUIOnLogin(userId, gameId) {
+            currentUserId = userId;
+            document.getElementById('username').textContent = gameId;
+            document.getElementById('deleteAccountBtn').style.display = 'block';
+            localStorage.setItem('gameId', gameId);
+            localStorage.setItem('sessionUserId', userId);
+            localStorage.removeItem('guestUsername');
+            const localTickets = parseInt(localStorage.getItem('ticketCount')) || 0;
+            document.getElementById('ticketCount').textContent = localTickets;
+            showMessage('ログイン成功: ' + gameId);
+        }
+
+        async function registerUserModal() {
+            const gameId = document.getElementById('modalUsername').value.trim();
+            const password = document.getElementById('modalPassword').value.trim();
+
+            if (!gameId || !password) {
+                showMessage('IDとPWを入力してください');
+                return;
+            }
+
+            if (!/^[A-Za-z0-9_ぁ-んァ-ヶー一-龠]{3,16}$/.test(gameId)) {
+                showMessage('IDは3〜16文字。ひらがな・カタカナ・漢字・英数字・_ だけ使えます');
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage('PWは6文字以上にしてください');
+                return;
+            }
+
+            const tempEmail = gameId + DOMAIN;
+
+            try {
+                console.log('新規登録開始:', gameId);
+
+                // Supabase Authでユーザーを作成（メール確認なし）
+                const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+                    email: tempEmail,
+                    password: password,
+                    options: {
+                        emailRedirectTo: undefined,
+                        data: {
+                            game_id: gameId
+                        }
+                    }
+                    });
+
+                if (authError) {
+                    console.error('Auth signup error:', authError);
+                    if (authError.message.includes('User already registered')) {
+                        showMessage('このIDは既に使用されています');
+                    } else {
+                        showMessage('登録失敗: ' + authError.message);
+                    }
+                    return;
+                }
+
+                const newUserId = authData.user?.id;
+                if (!newUserId) {
+                    console.error('ユーザーIDが取得できませんでした');
+                    showMessage('登録に失敗しました');
+                    return;
+                }
+
+                console.log('Auth登録成功。ユーザーID:', newUserId);
+
+                // セッションを確認
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                console.log('セッション状態:', session ? 'あり' : 'なし');
+
+                // セッション確立待機（トリガーの処理完了を待つ）
+                let attempts = 0;
+                let userExists = false;
+
+                while (attempts < 8 && !userExists) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+
+                    // usersテーブルにデータが存在するか確認
+                    const { data: checkData, error: checkError } = await supabaseClient
+                    .from('users')
+                    .select('id')
+                    .eq('id', newUserId)
+                    .single();
+
+                    if (checkData && !checkError) {
+                        userExists = true;
+                        console.log('ユーザーデータ確認完了');
+                        break;
+                    }
+
+                    console.log(`待機中... (${attempts + 1}/8)`);
+                    attempts++;
+                }
+
+                if (!userExists) {
+                    console.error('ユーザーデータの作成に失敗しました');
+                    showMessage('登録処理がタイムアウトしました。再試行してください。');
+                    return;
+                }
+
+                showMessage('登録成功！ようこそ ' + gameId + ' さん！');
+                updateUIOnLogin(newUserId, gameId);
+                closeLoginModal();
+
+            } catch (error) {
+                console.error('予期せぬ登録エラー:', error);
+                showMessage('登録エラー: ' + error.message);
+            }
+        }
+
+        async function loginUserModal() {
+            const gameId = document.getElementById('modalUsername').value.trim();
+            const password = document.getElementById('modalPassword').value.trim();
+
+            if (!gameId || !password) {
+                showMessage('IDとPWを入力してください');
+                return;
+            }
+
+            const tempEmail = gameId + DOMAIN;
+
+            try {
+                console.log('ログイン試行:', gameId);
+
+                // Authでログイン
+                const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+                    email: tempEmail,
+                    password: password,
+                    });
+
+                if (authError) {
+                    console.error('ログインエラー:', authError);
+                    showMessage('ログイン失敗: IDまたはPWが違います');
+                    return;
+                }
+
+                const userId = authData.user.id;
+                console.log('Authログイン成功。ユーザーID:', userId);
+
+                // セッション確立を待機（RLSが有効になるまで）
+                let userDataFound = false;
+                let attempts = 0;
+
+                while (attempts < 8 && !userDataFound) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+
+                    // セッションを最新に更新
+                    await supabaseClient.auth.refreshSession();
+
+                    // ユーザーデータ取得を試行
+                    const { data: userData, error: dbError } = await supabaseClient
+                    .from('users')
+                    .select('game_id')
+                    .eq('id', userId)
+                    .single();
+
+                    if (userData && !dbError) {
+                        userDataFound = true;
+                        console.log('ユーザーデータ取得成功:', userData.game_id);
+                        updateUIOnLogin(userId, userData.game_id);
+                        closeLoginModal();
+                        return;
+                    }
+
+                    console.log(`ユーザーデータ取得試行 ${attempts + 1}/8:`, dbError?.message || 'データなし');
+                    attempts++;
+                }
+
+                // 最終的に取得できなかった場合
+                console.error('ユーザーデータが見つかりませんでした');
+                showMessage('ユーザーデータが見つかりません。再度お試しください。');
+
+            } catch (error) {
+                console.error('予期せぬログインエラー:', error);
+                showMessage('ログインエラー');
+            }
+        }
+
+        async function confirmDeleteAccount() {
+            if (!currentUserId) {
+                alert('ログインしていません');
+                return;
+            }
+
+            const gameId = document.getElementById('username').textContent;
+
+            if (!confirm(`本当にアカウント「${gameId}」を削除しますか？\n\nこの操作は取り消せません。`)) {
+                return;
+            }
+
+            if (!confirm('最終確認です。本当に削除しますか？')) {
+                return;
+            }
+
+            try {
+                // アカウントごと削除(SQLの delete_my_account を使う)。まだ設定していない場合は、従来の方法にもどる
+                let { error } = await supabaseClient.rpc('delete_my_account');
+                if (error) {
+                    console.warn('delete_my_account が使えないため、従来の方法で削除します:', error.message);
+                    const r = await supabaseClient.from('users').delete().eq('id', currentUserId);
+                    error = r.error;
+                }
+
+                if (error) {
+                    alert('退会処理でエラーが発生しました: ' + error.message);
+                    return;
+                }
+
+                await supabaseClient.auth.signOut();
+                localStorage.removeItem('gameId');
+                localStorage.removeItem('sessionUserId');
+                alert('アカウントを削除しました。\nご利用ありがとうございました！');
+                window.location.reload();
+
+            } catch (e) {
+                console.error('退会処理エラー:', e);
+                alert('退会処理中にエラーが発生しました。');
+            }
+        }
+
+        window.onload = async function() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (session) {
+                const userId = session.user.id;
+
+                const { data: userData, error } = await supabaseClient
+                .from('users')
+                .select('game_id')
+                .eq('id', userId)
+                .single();
+
+                if (userData && !error) {
+                    updateUIOnLogin(userId, userData.game_id);
+                } else {
+                    await supabaseClient.auth.signOut();
+                }
+            } else {
+                const guestName = localStorage.getItem('guestUsername') || 'ゲスト';
+                document.getElementById('username').textContent = guestName;
+                document.getElementById('deleteAccountBtn').style.display = 'none';
+            }
+
+            const savedTickets = localStorage.getItem('ticketCount');
+            let tickets;
+            if (savedTickets === null) {
+                tickets = 50;
+                localStorage.setItem('ticketCount', tickets.toString());
+            } else {
+                tickets = parseInt(savedTickets);
+            }
+            document.getElementById('ticketCount').textContent = tickets;
+
+            const characters = JSON.parse(localStorage.getItem('characters')) || [];
+            if (characters.length === 0) {
+                characters.push({
+                    id: 1,
+                    name: 'たまりくん',
+                    level: 1,
+                    exp: 0,
+                    hp: 100,
+                    maxHp: 100,
+                    attack: 10,
+                    defense: 5,
+                    kamante: 8,
+                    image: 'illust/chars/char1.svg'
+                    });
+                localStorage.setItem('characters', JSON.stringify(characters));
+            }
+
+            updateTitleDisplay();
+        }
+
+        window.addEventListener('focus', function() {
+            updateTitleDisplay();
+            const tickets = localStorage.getItem('ticketCount');
+            if (tickets) {
+                document.getElementById('ticketCount').textContent = tickets;
+            }
+            });
+    </script>
+    <script>
+        const TRIVIA = [
+            '玉利の鎌手踊り(たまりのかまんておどり)は、約240年前に、豊作と無病息災を祈って伝わってきた踊りです。',
+            '玉利の鎌手踊りは、鹿児島市が指定した「郷土芸能」。その土地に伝わる大切な芸能のことです。',
+            '踊り手は「鎌」の6人と「棒」の6人。みんなで力を合わせて踊ります。',
+            '歌い手の歌に合わせて、鎌と棒を激しく打ち合わせるのが見どころです。',
+            '今は高校生が授業で練習し、デイサービスや小学校で披露して、次の世代へつないでいます。'
+        ];
+        let tIdx = Math.floor(Math.random() * TRIVIA.length), tTimer = null;
+
+        function showTrivia() {
+            const r = document.getElementById('rib');
+            r.style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('triviaText').textContent = TRIVIA[tIdx];
+                r.style.opacity = 1
+                }, 250)
+        }
+
+        function nextTrivia() {
+            tIdx = (tIdx + 1) % TRIVIA.length;
+            showTrivia();
+            clearInterval(tTimer);
+            tTimer = setInterval(nextTrivia, 8000)
+        }
+
+        function handleUsernameClick() {
+            showLoginModal()
+        }
+
+        function openSheet() {
+            document.getElementById('sheet').classList.add('on')
+        }
+
+        function closeSheet() {
+            document.getElementById('sheet').classList.remove('on')
+        }
+        const J = (k, d) => {
+            try {
+                return JSON.parse(localStorage.getItem(k)) || d
+            } catch (e) {
+                return d
+            }
+        };
+        const setT = (id, v) => {
+            const e = document.getElementById(id);
+            if (e)e.textContent = v
+        };
+
+        function renderStats() {
+            const r = J('rhythmGameStats', {playCount: 0, bestScore: 0});
+            setT('rhBest', r.bestScore || 0);
+            setT('rhPlay', r.playCount || 0);
+            const rb = J('kamanteBadgeData', {earned: {}}), nb = J('kamanteRunBadges', {});
+            setT('bdCount', Object.keys(rb.earned || {}).length + Object.keys(nb).length);
+            const rn = J('runGameStats', {bestDistance: 0, bestScore: 0});
+            setT('runBest', rn.bestScore ? 'ベスト ' + rn.bestScore + '点' : 'ベスト ' + (rn.bestDistance || 0) + 'm');
+            const pz = J('puzzleGameStats', {bestTime: null});
+            if (pz.bestTime) {
+                const m = Math.floor(pz.bestTime / 60), s = (pz.bestTime % 60).toFixed(1);
+                setT('puzBest', 'さいそく ' + m + ':' + s.padStart(4, '0'))
+            }
+        }
+        const SIZES = [1, 1.15, 1.3];
+
+        function applySize() {
+            const st = J('kamanteSettings', {});
+            document.getElementById('wrap').style.zoom = st.ts || 1
+        }
+
+        function cycleSize() {
+            const st = J('kamanteSettings', {});
+            st.ts = SIZES[(SIZES.indexOf(st.ts || 1) + 1) % SIZES.length];
+            localStorage.setItem('kamanteSettings', JSON.stringify(st));
+            applySize();
+            showMessage('文字の大きさを変えました')
+        }
+
+        function renameChars() {
+            const M = {1: 'たまりくん', 2: 'かまたろう', 3: 'さくらちゃん', 4: 'ともりん', 5: 'KJラビット'};
+            try {
+                const cs = JSON.parse(localStorage.getItem('characters')) || [];
+                let ch = false;
+                cs.forEach(c => {
+                    if (M[c.id] && c.name !== M[c.id]) {
+                        c.name = M[c.id];
+                        ch = true
+                    }
+                    });
+                if (ch)localStorage.setItem('characters', JSON.stringify(cs))
+            } catch (e) {}
+        }
+
+        function initHome() {
+            renameChars();
+            const sky = document.getElementById('sky');
+            for (let i = 0; i < 46; i++) {
+                const s = document.createElement('i');
+                s.className = 'star';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.top = Math.random() * 70 + '%';
+                s.style.animationDelay = Math.random() * 3 + 's';
+                sky.appendChild(s)
+            }
+            for (let i = 0; i < 12; i++) {
+                const p = document.createElement('i');
+                p.className = 'petal';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (9 + Math.random() * 8) + 's';
+                p.style.animationDelay = (-Math.random() * 12) + 's';
+                sky.appendChild(p)
+            }
+            const hero = document.getElementById('hero');
+            for (let i = 0; i < 12; i++) {
+                const p = document.createElement('i');
+                p.className = 'sp';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = (-Math.random() * 4) + 's';
+                p.style.animationDuration = (3 + Math.random() * 3) + 's';
+                hero.appendChild(p)
+            }
+            // 画像: png / jpg / webp のどれでもOK(名前は group_photo)
+            const C = ['group_photo.png', 'group_photo.jpg', 'group_photo.jpeg', 'group_photo.webp'];
+            let k = 0;
+            const im = document.getElementById('heroImg');
+            im.onerror = () => {
+                k++;
+                if (k < C.length)im.src = C[k]; else hero.classList.add('noimg')
+            };
+            im.src = C[0];
+            showTrivia();
+            tTimer = setInterval(nextTrivia, 8000);
+            renderStats();
+            applySize();
+            dailyInit();
+        }
+        // ---- きょうのごほうび(まいにち) ----
+        const DAILY = [5, 5, 10, 5, 5, 10, 30];
+
+        function todayStr() {
+            const d = new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')
+        }
+
+        function dayGap(a, b) {
+            return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000)
+        }
+
+        function dailyState() {
+            const d = J('kamanteDaily', {last: null, streak: 0}), t = todayStr(), can = d.last !== t;
+            let next = d.streak;
+            if (can) {
+                next = (d.last === null) ? 1 : (dayGap(d.last, t) <= 2 ? d.streak + 1 : 1)
+            }
+            const idx = (next - 1) % 7, filled = can ? idx : (d.streak === 0 ? 0 : ((d.streak - 1) % 7) + 1);
+            return {d, t, can, next, idx, filled}
+        }
+
+        function renderDaily() {
+            const st = dailyState();
+            document.getElementById('dsub').textContent = st.can ? 'きょうの分を、うけとろう！' : 'きょうは もううけとったよ。また あした！';
+            document.getElementById('dgrid').innerHTML = DAILY.map((tk, i) => `<div class="ds1 ${i < st.filled ? 'done' : ''} ${st.can && i === st.idx ? 'today' : ''} ${i === 6 ? 'big' : ''}"><span>${i + 1}日め</span><b>🎫${tk}</b></div>`).join('');
+            const b = document.getElementById('dclaim');
+            b.disabled = !st.can;
+            b.textContent = st.can ? '🎁 うけとる！' : '✅ うけとりずみ';
+            document.getElementById('moreDot').style.display = st.can ? 'block' : 'none';
+            document.getElementById('dailyDot').style.display = st.can ? 'inline-block' : 'none';
+            return st
+        }
+
+        function openDaily() {
+            renderDaily();
+            document.getElementById('daily').classList.add('on')
+        }
+
+        function closeDaily() {
+            document.getElementById('daily').classList.remove('on')
+        }
+
+        function claimDaily() {
+            const st = dailyState();
+            if (!st.can)return;
+            const tk = DAILY[st.idx];
+            localStorage.setItem('ticketCount', (parseInt(localStorage.getItem('ticketCount')) || 0) + tk);
+            localStorage.setItem('kamanteDaily', JSON.stringify({last: st.t, streak: st.next}));
+            document.getElementById('ticketCount').textContent = localStorage.getItem('ticketCount');
+            if (navigator.vibrate)navigator.vibrate([30, 20, 60]);
+            showMessage(st.idx === 6 ? '🎉 7日そろった！ 🎫' + tk + 'まい ゲット！' : '🎫 ' + tk + 'まい ゲット！');
+            const em = ['🎊', '⭐', '🏮', '✨'];
+            for (let i = 0; i < (st.idx === 6 ? 50 : 22); i++) {
+                const e = document.createElement('div');
+                e.textContent = em[i % 4];
+                e.style.cssText = 'position:fixed;top:-40px;font-size:28px;pointer-events:none;z-index:300;left:' + Math.random() * 100 + 'vw;animation:fall ' + (2 + Math.random() * 2) + 's linear ' + Math.random() * .6 + 's forwards';
+                document.body.appendChild(e);
+                setTimeout(() => e.remove(), 5000)
+            }
+            renderDaily()
+        }
+
+        function dailyInit() {
+            const st = renderDaily();
+            if (st.can && localStorage.getItem('kamanteDailyShown') !== st.t) {
+                localStorage.setItem('kamanteDailyShown', st.t);
+                setTimeout(openDaily, 1200)
+            }
+        }
+        window.addEventListener('load', initHome);
+        window.addEventListener('focus', renderStats);
+    </script>
+    <script src="kamante-bgm.js" data-bottom="84px"></script>
+</body>
+</html>

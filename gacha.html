@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>おたから福引 - かまんてびーと</title>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Antique+Soft&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #ffc233;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            font-family: 'Klee One',sans-serif;
+            color: #fff8e7;
+            min-height: 100vh;
+            background: linear-gradient(180deg,#070b24,#151a55 50%,#3a1d5c);
+            overflow-x: hidden;
+        }
+        #sky {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #fff;
+            animation: tw 3s ease-in-out infinite;
+        }
+        @keyframes tw {
+            50% {
+                opacity: .15;
+                transform: scale(.6);
+            }
+        }
+        .hd {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: calc(env(safe-area-inset-top,0px) + 8px) 12px 8px;
+            background: rgba(10,10,40,.8);
+            border-bottom: 1px solid rgba(255,255,255,.15);
+        }
+        .bk {
+            padding: 7px 14px;
+            background: var(--gold);
+            color: #2b1d00;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .tk {
+            background: rgba(0,0,0,.35);
+            border-radius: 14px;
+            padding: 5px 14px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top,0px) + 64px) 14px 40px;
+            text-align: center;
+        }
+        h1 {
+            font: 900 34px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            text-shadow: 0 0 22px rgba(255,194,51,.65),0 3px 0 #8a5a00;
+            margin-top: 8px;
+        }
+        .sub {
+            font-size: 15px;
+            opacity: .9;
+            margin-top: 2px;
+        }
+        .lanterns {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 10px 0;
+            position: relative;
+        }
+        .lanterns::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10px;
+            right: -10px;
+            height: 2px;
+            background: #6d4c41;
+        }
+        .ln {
+            width: 28px;
+            height: 38px;
+            margin-top: 2px;
+            border-radius: 50%/45%;
+            background: radial-gradient(circle at 40% 35%,#ffe0a3,#ff7043 55%,#c62828);
+            box-shadow: 0 0 20px rgba(255,152,0,.8);
+            transform-origin: 50% -4px;
+            animation: sway 3s ease-in-out infinite alternate;
+        }
+        .ln:nth-child(even) {
+            animation-delay: -1.5s;
+            height: 32px;
+        }
+        @keyframes sway {
+            from {
+                transform: rotate(-7deg);
+            }
+            to {
+                transform: rotate(7deg);
+            }
+        }
+        .drum {
+            position: relative;
+            width: min(62vw,240px);
+            aspect-ratio: 1;
+            margin: 18px auto 14px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 45%,#fff1c9 0 52%,#e6b867 53% 57%,#9c4a2b 58% 100%);
+            border: 6px solid #5d2e1a;
+            box-shadow: 0 14px 0 #3b1c0e,0 24px 30px rgba(0,0,0,.5),0 0 40px rgba(255,160,60,.45);
+            cursor: pointer;
+        }
+        .dwrap {
+            animation: bob 3s ease-in-out infinite;
+            will-change: transform;
+        }
+        @keyframes bob {
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+        .drum::before {
+            content: '';
+            position: absolute;
+            inset: 14%;
+            border-radius: 50%;
+            border: 5px solid #c62828;
+            opacity: .9;
+        }
+        .drum::after {
+            content: '祭';
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font: 900 64px 'Zen Antique Soft',serif;
+            color: #c62828;
+        }
+        @keyframes idle {
+            50% {
+                transform: scale(1.03);
+            }
+        }
+        .drum.hit {
+            animation: hit .16s;
+        }
+        @keyframes hit {
+            50% {
+                transform: scale(.9);
+            }
+        }
+        .rip {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 5px solid #ffd54f;
+            pointer-events: none;
+            animation: rip .6s ease-out forwards;
+        }
+        @keyframes rip {
+            to {
+                transform: scale(1.8);
+                opacity: 0;
+            }
+        }
+        .fl {
+            position: fixed;
+            font: 900 30px 'Zen Antique Soft',serif;
+            color: #ffeb3b;
+            text-shadow: 0 0 12px #ff9800,0 2px 6px #000;
+            pointer-events: none;
+            z-index: 300;
+            animation: flo .8s ease-out forwards;
+        }
+        @keyframes flo {
+            to {
+                transform: translateY(-60px);
+                opacity: 0;
+            }
+        }
+        .btns {
+            display: grid;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .gb {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            border: 0;
+            border-radius: 22px;
+            font: 600 22px 'Klee One',sans-serif;
+            color: #2b1d00;
+            background: linear-gradient(135deg,#ffd54f,#ffb300);
+            box-shadow: 0 6px 0 #b8861a,0 10px 20px rgba(0,0,0,.4);
+            cursor: pointer;
+        }
+        .gb small {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            text-align: left;
+        }
+        .gb span {
+            font-size: 17px;
+        }
+        .gb.b2 {
+            background: linear-gradient(135deg,#ff8a65,#e53935);
+            color: #fff;
+            box-shadow: 0 6px 0 #8e1a1a,0 10px 20px rgba(0,0,0,.4);
+        }
+        .gb.b3 {
+            background: linear-gradient(135deg,#ba68c8,#6a1b9a);
+            color: #fff;
+            box-shadow: 0 6px 0 #38006b,0 10px 20px rgba(0,0,0,.4);
+        }
+        .gb:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 rgba(0,0,0,.4);
+        }
+        .gb:disabled {
+            filter: grayscale(.8);
+            opacity: .6;
+        }
+        .box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,.1);
+            border: 2px solid rgba(255,255,255,.3);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 17px;
+        }
+        details {
+            margin-top: 14px;
+            background: rgba(255,255,255,.08);
+            border-radius: 16px;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 14px;
+        }
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .rr {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,.1);
+        }
+        #stage {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: radial-gradient(circle at 50% 40%,#3b1d5e,#05051a);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            overflow: hidden;
+            padding: 20px;
+            text-align: center;
+        }
+        #stage.on {
+            display: flex;
+        }
+        #stage.shake {
+            animation: shk .3s;
+        }
+        @keyframes shk {
+            20% {
+                transform: translate(-8px,4px);
+            }
+            40% {
+                transform: translate(8px,-4px);
+            }
+            60% {
+                transform: translate(-6px,-3px);
+            }
+            80% {
+                transform: translate(6px,3px);
+            }
+        }
+        .rays {
+            position: absolute;
+            width: 160vmax;
+            height: 160vmax;
+            left: 50%;
+            top: 50%;
+            margin: -80vmax;
+            background: repeating-conic-gradient(from 0deg,rgba(255,255,255,.16) 0 6deg,transparent 6deg 18deg);
+            animation: spin 14s linear infinite;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .4s;
+        }
+        .rays.on {
+            opacity: 1;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        #st {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            width: 100%;
+        }
+        .tt {
+            font: 900 30px 'Zen Antique Soft',serif;
+            color: var(--gold);
+            text-shadow: 0 0 18px rgba(255,194,51,.8),0 3px 6px #000;
+        }
+        .tt2 {
+            font-size: 18px;
+            animation: blink 1s infinite alternate;
+        }
+        @keyframes blink {
+            to {
+                opacity: .35;
+            }
+        }
+        .dots {
+            display: flex;
+            gap: 12px;
+        }
+        .dots i {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.2);
+            border: 2px solid #fff;
+        }
+        .dots i.on {
+            background: var(--gold);
+            box-shadow: 0 0 14px var(--gold);
+        }
+        .skp {
+            position: fixed;
+            top: calc(env(safe-area-inset-top,0px) + 10px);
+            right: 12px;
+            z-index: 5;
+            padding: 8px 16px;
+            border-radius: 16px;
+            border: 2px solid #fff;
+            background: rgba(0,0,0,.4);
+            color: #fff;
+            font: 600 15px 'Klee One',sans-serif;
+        }
+        .cap {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 10px;
+            animation: drop .9s cubic-bezier(.3,1.5,.5,1);
+        }
+        @keyframes drop {
+            from {
+                transform: translateY(-70vh) rotate(-180deg);
+            }
+        }
+        .cap.wob {
+            animation: wob .5s infinite;
+        }
+        @keyframes wob {
+            25% {
+                transform: rotate(-8deg);
+            }
+            75% {
+                transform: rotate(8deg);
+            }
+        }
+        .ct,.cb {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 50%;
+            border: 5px solid #fff;
+        }
+        .ct {
+            top: 0;
+            border-radius: 65px 65px 0 0;
+            background: var(--rc);
+            box-shadow: 0 0 36px var(--rc);
+        }
+        .cb {
+            bottom: 0;
+            border-radius: 0 0 65px 65px;
+            background: #fff;
+        }
+        .cap.r7 .ct {
+            animation: rbw 1.5s linear infinite;
+        }
+        @keyframes rbw {
+            to {
+                filter: hue-rotate(360deg);
+            }
+        }
+        .card {
+            position: relative;
+            width: min(80vw,300px);
+            padding: 20px 16px;
+            border-radius: 24px;
+            background: linear-gradient(160deg,#fffdf5,#ffe9b8);
+            border: 6px solid var(--rc);
+            box-shadow: 0 0 40px var(--rc),0 14px 30px rgba(0,0,0,.5);
+            color: #3a2410;
+            animation: cin .5s cubic-bezier(.2,1.4,.4,1);
+        }
+        @keyframes cin {
+            from {
+                transform: perspective(600px) rotateY(100deg) scale(.5);
+                opacity: 0;
+            }
+        }
+        .card.r7 {
+            animation: cin .5s cubic-bezier(.2,1.4,.4,1),rbc 2s linear infinite;
+        }
+        @keyframes rbc {
+            0% {
+                border-color: #f44;
+            }
+            33% {
+                border-color: #4f4;
+            }
+            66% {
+                border-color: #44f;
+            }
+            100% {
+                border-color: #f44;
+            }
+        }
+        .card .em {
+            font-size: 96px;
+            line-height: 1.15;
+            filter: drop-shadow(0 6px 6px rgba(0,0,0,.3));
+        }
+        .card img {
+            width: 160px;
+            height: 160px;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 6px rgba(0,0,0,.25));
+        }
+        .card img.ico {
+            width: 130px;
+            height: 130px;
+        }
+        .sc .si {
+            width: 56px;
+            height: 56px;
+            object-fit: contain;
+        }
+        .card .nm {
+            font: 900 28px 'Zen Antique Soft',serif;
+        }
+        .card .rn {
+            font-size: 15px;
+            font-weight: 600;
+            color: #6a4a2a;
+        }
+        .card .stz {
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: #e65100;
+        }
+        .card .tg {
+            display: inline-block;
+            background: #e63946;
+            color: #fff;
+            border-radius: 10px;
+            padding: 2px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .card .tg.c {
+            background: #6a1b9a;
+        }
+        .card .tr {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 6px;
+        }
+        .banner {
+            font: 900 40px 'Zen Antique Soft',serif;
+            color: #fff;
+            text-shadow: 0 0 24px var(--rc),0 0 8px var(--rc),0 4px 8px #000;
+            animation: bnr 1.2s ease-out;
+        }
+        @keyframes bnr {
+            0% {
+                transform: scale(3);
+                opacity: 0;
+            }
+            30% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.1);
+            }
+        }
+        .sg {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(92px,1fr));
+            gap: 8px;
+            width: min(94vw,520px);
+            max-height: 46vh;
+            overflow: auto;
+            padding: 4px;
+        }
+        .sc {
+            position: relative;
+            border-radius: 14px;
+            padding: 8px 4px;
+            background: rgba(255,255,255,.12);
+            border: 3px solid var(--rc);
+            box-shadow: 0 0 10px var(--rc);
+            animation: cin .4s backwards;
+        }
+        .sc .e {
+            font-size: 34px;
+        }
+        .sc .n {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .sc .x {
+            font-size: 12px;
+            color: #ffeb3b;
+        }
+        .sc .nw {
+            position: absolute;
+            top: -8px;
+            right: -4px;
+            background: #e63946;
+            border-radius: 8px;
+            font-size: 11px;
+            padding: 1px 6px;
+            font-weight: 600;
+        }
+        .row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            padding: 12px 22px;
+            border: 0;
+            border-radius: 24px;
+            background: var(--gold);
+            color: #2b1d00;
+            font: 600 19px 'Klee One',sans-serif;
+            box-shadow: 0 5px 0 #b8861a;
+            text-decoration: none;
+        }
+        .btn.g {
+            background: transparent;
+            border: 3px solid #fff;
+            color: #fff;
+            box-shadow: none;
+        }
+        .sk {
+            position: fixed;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 400;
+            animation: skk .8s ease-out forwards;
+        }
+        @keyframes skk {
+            to {
+                transform: translate(var(--dx),var(--dy)) scale(.2);
+                opacity: 0;
+            }
+        }
+        .conf {
+            position: fixed;
+            top: -40px;
+            font-size: 28px;
+            animation: fall linear forwards;
+            pointer-events: none;
+            z-index: 500;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+        .flash {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            z-index: 450;
+            pointer-events: none;
+            animation: fls .5s ease-out forwards;
+        }
+        @keyframes fls {
+            from {
+                opacity: .95;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        .petal {
+            position: absolute;
+            top: -20px;
+            width: 10px;
+            height: 8px;
+            border-radius: 70% 0 70% 0;
+            background: rgba(255,183,205,.8);
+            animation: pfall linear infinite;
+        }
+        @keyframes pfall {
+            to {
+                transform: translate(60px,110vh) rotate(540deg);
+            }
+        }
+        .gz {
+            margin-top: 14px;
+            background: rgba(255,255,255,.1);
+            border: 2px solid rgba(255,255,255,.25);
+            border-radius: 16px;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        .gz .gh {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+        .gbar {
+            height: 14px;
+            border-radius: 7px;
+            background: rgba(255,255,255,.2);
+            overflow: hidden;
+            margin: 6px 0;
+        }
+        .gbar i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg,#ffc233,#ff7043,#e91e63);
+            transition: width .6s;
+        }
+        .gz .gn {
+            font-size: 13px;
+        }
+        .gz.full {
+            border-color: var(--gold);
+            box-shadow: 0 0 22px var(--gold);
+            animation: gpl 1s infinite;
+        }
+        @keyframes gpl {
+            50% {
+                box-shadow: 0 0 34px var(--gold);
+            }
+        }
+        .card.back {
+            animation: wob .45s infinite;
+            background: linear-gradient(160deg,#2b1d4a,#120a2a);
+            color: #fff;
+        }
+        .gb {
+            position: relative;
+            overflow: hidden;
+        }
+        .gb::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 35%;
+            height: 100%;
+            background: linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);
+            transform: translateX(-120%) skewX(-20deg);
+            animation: gsh 3.5s infinite;
+            pointer-events: none;
+        }
+        @keyframes gsh {
+            0% {
+                transform: translateX(-120%) skewX(-20deg);
+            }
+            60%,100% {
+                transform: translateX(340%) skewX(-20deg);
+            }
+        }
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                animation-duration: .01s!important;
+            }
+        }
+        body {
+            background-attachment: fixed;
+        }
+        .hd {
+            backdrop-filter: blur(8px);
+        }
+        /*device-fix*/
+        button,a {
+            touch-action: manipulation;
+        }
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        @supports (-webkit-touch-callout:none) {
+            * {
+                -webkit-backdrop-filter: none!important;
+                backdrop-filter: none!important;
+            }
+            body {
+                background-attachment: scroll!important;
+            }
+        }
+        /*tablet*/
+        @media(min-width:768px) {
+            .wrap {
+                zoom: 1.25;
+            }
+            .hd {
+                zoom: 1.1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="sky"></div>
+    <div class="hd">
+        <a class="bk" href="index.html">🏠 ホーム</a>
+        <div class="tk">🎫 <span id="tkn">0</span>枚</div>
+    </div>
+    <div class="wrap">
+        <h1>おたから福引</h1>
+        <div class="sub">たいこをたたいて、お祭りのおたからをゲット！</div>
+        <div class="lanterns">
+            <i class="ln"></i>
+            <i class="ln"></i>
+            <i class="ln"></i>
+            <i class="ln"></i>
+            <i class="ln"></i>
+        </div>
+        <div class="dwrap">
+            <div class="drum" id="mainDrum"></div>
+        </div>
+        <div class="btns">
+            <button class="gb" id="b1" onclick="pull(1)">
+                <div>たんぱつ<small>1回ひく</small></div>
+                <span>🎫 1</span>
+            </button>
+            <button class="gb b2" id="b10" onclick="pull(10)">
+                <div>10れん<small>★3いじょう 1こ確定！</small></div>
+                <span>🎫 10</span>
+            </button>
+        </div>
+        <div class="gz" id="gz">
+            <div class="gh">
+                <span>🏮 おまつりゲージ</span>
+                <span id="gt">0/30</span>
+            </div>
+            <div class="gbar"><i id="gf"></i></div>
+            <div class="gn" id="gn"></div>
+        </div>
+        <a class="box" href="collection.html"><span>📚 おたから図鑑</span><span><b id="zk">0</b> / <span id="zn">0</span></span></a>
+        <details>
+            <summary>📊 出る確率</summary>
+            <div id="rates"></div>
+        </details>
+        <p style="font-size:13px;opacity:.8;margin-top:14px">チケットは、ゲームで遊ぶとたまるよ 🎫</p>
+    </div>
+    <div id="stage">
+        <div class="rays" id="rays"></div>
+        <button class="skp" id="skp">スキップ ▶▶</button>
+        <div id="st"></div>
+    </div>
+    <script>
+        const RAR = {
+            1: {n: 'ふつう', c: '#cfd8dc', s: '★'},
+            2: {n: 'めずらしい', c: '#81c784', s: '★★'},
+            3: {n: 'レア', c: '#64b5f6', s: '★★★'},
+            4: {n: 'スーパーレア', c: '#ba68c8', s: '★★★★'},
+            5: {n: 'ウルトラレア', c: '#ff8a65', s: '★★★★★'},
+            6: {n: 'レジェンド', c: '#ffd54f', s: '👑'},
+            7: {n: 'シークレット', c: '#ff80ff', s: '🌈'}
+        };
+        const CATS = {d: '踊りの道具', m: '祭りの小物', g: '鹿児島グルメ', p: '名所・工芸'};
+        const ITEMS = [
+            {id: 'm_lantern', e: '🏮', n: 'ちょうちん', r: 1, c: 'm', t: 'ちょうちんは、あかりで夜のお祭りをはなやかにしてくれます。'},
+            {id: 'm_fuurin', e: '🎐', n: 'ふうりん', r: 1, c: 'm', t: 'ふうりんは、風がふくと涼しい音がなる、夏のかざりです。'},
+            {id: 'm_ramune', e: '🥤', n: 'ラムネ', r: 1, c: 'm', t: 'ラムネは、ビー玉でふたをした、お祭りの定番の飲み物です。'},
+            {id: 'm_candy', e: '🍭', n: 'わたあめ', r: 1, c: 'm', t: 'わたあめは、お砂糖をふわふわにした、お祭りのおかしです。'},
+            {id: 'm_dango', e: '🍡', n: 'おだんご', r: 1, c: 'm', t: 'おだんごは、お祭りやお祝いで食べられてきた和菓子です。'},
+            {id: 'm_balloon', e: '🎈', n: 'ふうせん', r: 1, c: 'm', t: 'ふうせんは、お祭りの屋台でもらえる、ワクワクのおみやげです。'},
+            {id: 'g_imo', e: '🍠', n: 'さつまいも', r: 1, c: 'g', t: '鹿児島県は、さつまいもの産地として日本一で有名です。'},
+            {id: 'g_kibinago', e: '🐟', n: 'きびなご', r: 1, c: 'g', t: 'きびなごは、鹿児島の人気のさかな。小さくて、お刺身や天ぷらで食べます。'},
+            {id: 'm_taiko', e: '🥁', n: 'たいこ', r: 2, c: 'm', t: 'たいこの音は、踊りやお祭りを盛り上げてくれます。'},
+            {id: 'm_fue', e: '🎵', n: 'ふえ', r: 2, c: 'm', t: 'ふえの音色は、お祭りの雰囲気をぐっと高めてくれます。'},
+            {id: 'm_mask', e: '🎭', n: 'おめん', r: 2, c: 'm', t: 'おめんは、お祭りの屋台でも人気のおみやげです。'},
+            {id: 'g_satsumaage', e: '🍢', n: 'さつまあげ', r: 2, c: 'g', t: 'さつまあげは、鹿児島では「つけあげ」とも呼ばれています。'},
+            {id: 'g_cha', e: '🍵', n: 'おちゃ', r: 2, c: 'g', t: '鹿児島は、お茶の産地としても有名です。'},
+            {id: 'g_keihan', e: '🍚', n: 'けいはん', r: 2, c: 'g', t: '鶏飯(けいはん)は、奄美大島などに伝わる、ごはんにスープをかけて食べる郷土料理です。'},
+            {id: 'g_kurobuta', e: '🐖', n: 'くろぶた', r: 3, c: 'g', t: '鹿児島の黒豚は、全国的に有名なブランド豚です。'},
+            {id: 'g_shirokuma', e: '🍧', n: 'しろくま', r: 3, c: 'g', t: '白くまは、鹿児島発祥として知られるかき氷。練乳とフルーツがのっています。'},
+            {id: 'g_karukan', e: '🍰', n: 'かるかん', r: 3, c: 'g', t: 'かるかんは、山芋を使った鹿児島の代表的な和菓子です。'},
+            {id: 'g_daikon', e: '🥕', n: 'さくらじまだいこん', r: 3, c: 'g', t: '桜島大根は、世界一大きい大根としても知られています。'},
+            {id: 'p_sakurajima', e: '🌋', n: 'さくらじま', r: 3, c: 'p', t: '桜島は、鹿児島のシンボルの、今も活動している火山です。'},
+            {id: 'd_kama', e: '🌾', n: 'かま', r: 4, c: 'd', t: 'かまんて踊りで使う「鎌」。踊り手は、鎌と棒を打ち合わせて踊ります。'},
+            {id: 'd_bou', e: '🪵', n: 'ぼう', r: 4, c: 'd', t: '玉利の鎌手踊りは、鎌の6人と棒の6人で踊ります。歌に合わせて、はげしく打ち合うのが見どころ！'},
+            {id: 'd_tabi', e: '🧦', n: 'たび', r: 4, c: 'd', t: '足袋は、日本の伝統的な履き物。踊りの足元をきりっと見せてくれます。'},
+            {id: 'd_isho', e: '👘', n: 'いしょう', r: 5, c: 'd', t: '踊りの衣装は、見る人も、踊る人も、気持ちを高めてくれます。'},
+            {id: 'd_hachimaki', e: '🪢', n: 'はちまき', r: 5, c: 'd', t: 'はちまきは、気合いを入れるときに頭に巻く布です。'},
+            {id: 'd_kote', e: '🧤', n: 'こて', r: 5, c: 'd', t: 'こて(手甲)は、手の甲を守る、昔ながらの道具です。'},
+            {id: 'p_kiriko', e: '💠', n: 'さつまきりこ', r: 5, c: 'p', t: '薩摩切子は、鹿児島の伝統工芸の、美しいガラス細工です。'}
+        ];
+        const itemById = Object.fromEntries(ITEMS.map(i => [i.id, i]));
+        const J = (k, d) => {
+            try {
+                return JSON.parse(localStorage.getItem(k)) || d
+            } catch (e) {
+                return d
+            }
+        };
+        const $ = id => document.getElementById(id), rnd = (a, b) => a + Math.random() * (b - a);
+        // 古い景品(文房具など)は、チケットに交換して図鑑を新しくする
+
+        function migrateOld() {
+            if (localStorage.getItem('takaraMigrated'))return 0;
+            const col = J('collection', []), keep = [];
+            let refund = 0;
+            col.forEach(it => {
+                if (it.tk || it.isCharacter)keep.push(it); else refund += [0, 1, 2, 5, 10, 30, 100][it.rarity] || 1
+                });
+            localStorage.setItem('collection', JSON.stringify(keep));
+            if (refund)localStorage.setItem('ticketCount', (parseInt(localStorage.getItem('ticketCount')) || 0) + refund);
+            localStorage.setItem('takaraMigrated', '1');
+            return refund;
+        }
+        const ownedMap = () => {
+            const m = {};
+            J('collection', []).forEach(x => {
+                if (x.tk)m[x.itemId] = (m[x.itemId] || 0) + 1
+                });
+            return m
+        };
+        const CSS_COMMON = 1;
+
+        let tickets = parseInt(localStorage.getItem('ticketCount')) || 0, busy = false, skipAll = false, ac = null;
+        const RATE = [0, 28.7, 28, 22, 12, 6, 3, 0.3];
+        const LEGEND = [
+            {id: 2, name: 'かまたろう', e: '👦', hp: 120, attack: 12, defense: 8, kamante: 6, image: 'gacha/character2.webp'},
+            {id: 3, name: 'さくらちゃん', e: '👧', hp: 90, attack: 15, defense: 4, kamante: 10, image: 'gacha/character3.webp'},
+            {id: 4, name: 'ともりん', e: '🧚', hp: 110, attack: 8, defense: 12, kamante: 7, image: 'gacha/character4.webp'}
+        ];
+        const SECRET = [
+            {id: 5, name: 'KJラビット', e: '🐰', hp: 100, attack: 10, defense: 10, kamante: 9, image: 'gacha/character5.webp'}
+        ];
+        // ---- 音 ----
+
+        function ensureAudio() {
+            if (!ac) {
+                try {
+                    ac = new (window.AudioContext || window.webkitAudioContext)()
+                } catch (e) {}
+            }
+            ac && ac.state === 'suspended' && ac.resume()
+        }
+        const sndOn = () => J('kamanteSettings', {}).sound !== false;
+
+        function tone(f1, f2, d, type = 'sine', v = .3, dl = 0) {
+            if (!ac || !sndOn())return;
+            const t = ac.currentTime + dl, o = ac.createOscillator(), g = ac.createGain();
+            o.type = type;
+            o.frequency.setValueAtTime(f1, t);
+            o.frequency.exponentialRampToValueAtTime(Math.max(20, f2), t + d);
+            g.gain.setValueAtTime(v, t);
+            g.gain.exponentialRampToValueAtTime(.001, t + d);
+            o.connect(g);
+            g.connect(ac.destination);
+            o.start(t);
+            o.stop(t + d)
+        }
+        const don = (p = 1) => {
+            tone(140 * p, 45, .3, 'sine', .7);
+            tone(900, 500, .05, 'square', .08)
+        };
+        const sfx = {
+            hit: c => don(1 + c * .08),
+            charge: () => tone(200, 1200, .6, 'sawtooth', .12),
+            drop: () => {
+                tone(700, 200, .35, 'triangle', .25)
+            },
+            open: () => tone(300, 1500, .25, 'triangle', .3),
+            roll: () => {
+                for (let i = 0; i < 9; i++)tone(130 + i * 9, 60, .08, 'sine', .35, i * .07)
+            },
+            rar: r => {
+                const S = {
+                    1: [523],
+                    2: [523, 659],
+                    3: [523, 659, 784],
+                    4: [523, 659, 784, 1047],
+                    5: [523, 659, 784, 1047, 1319],
+                    6: [523, 659, 784, 1047, 1319, 1568],
+                    7: [392, 523, 659, 784, 1047, 1319, 1568, 2093]
+                }[r];
+                S.forEach((f, i) => tone(f, f, r >= 5 ? .35 : .2, 'triangle', .28, i * .09));
+                if (r >= 5)don(.8)
+            }
+        };
+        const vib = n => navigator.vibrate && navigator.vibrate(n);
+        // ---- 演出ヘルパー ----
+
+        function sparks(x, y, n, cols, sp = 120) {
+            for (let i = 0; i < n; i++) {
+                const d = document.createElement('i');
+                d.className = 'sk';
+                d.style.left = x - 4 + 'px';
+                d.style.top = y - 4 + 'px';
+                const a = rnd(0, 6.28), v = rnd(.4, 1) * sp;
+                d.style.setProperty('--dx', Math.cos(a) * v + 'px');
+                d.style.setProperty('--dy', Math.sin(a) * v + 'px');
+                d.style.background = cols[i % cols.length];
+                document.body.appendChild(d);
+                setTimeout(() => d.remove(), 850)
+            }
+        }
+        const mid = () => [innerWidth / 2, innerHeight * .45];
+
+        function confetti(n = 40) {
+            const em = ['🎊', '⭐', '🏮', '✨', '🌸'];
+            for (let i = 0; i < n; i++) {
+                const e = document.createElement('div');
+                e.className = 'conf';
+                e.textContent = em[i % 5];
+                e.style.left = rnd(0, 100) + 'vw';
+                e.style.animationDuration = rnd(2, 4) + 's';
+                e.style.animationDelay = rnd(0, .8) + 's';
+                document.body.appendChild(e);
+                setTimeout(() => e.remove(), 5000)
+            }
+        }
+
+        function flash() {
+            const f = document.createElement('div');
+            f.className = 'flash';
+            document.body.appendChild(f);
+            setTimeout(() => f.remove(), 600)
+        }
+
+        function shake() {
+            const s = $('stage');
+            s.classList.remove('shake');
+            void s.offsetWidth;
+            s.classList.add('shake')
+        }
+
+        function floatT(t, x, y) {
+            const f = document.createElement('div');
+            f.className = 'fl';
+            f.textContent = t;
+            f.style.left = x - 30 + 'px';
+            f.style.top = y - 20 + 'px';
+            document.body.appendChild(f);
+            setTimeout(() => f.remove(), 850)
+        }
+        const wait = ms => new Promise(r => setTimeout(r, ms));
+
+        function tapOrWait(ms) {
+            return new Promise(r => {
+                let done = false;
+                const fin = () => {
+                    if (done)return;
+                    done = true;
+                    clearTimeout(t);
+                    $('stage').removeEventListener('pointerdown', fin);
+                    r()
+                };
+                const t = ms ? setTimeout(fin, ms) : null;
+                setTimeout(() => $('stage').addEventListener('pointerdown', fin), 250);
+                if (skipAll)fin();
+                $('skp').addEventListener('click', fin, {once: true})
+                })
+        }
+        // ---- 抽選 ----
+
+        function rollRarity() {
+            const x = Math.random() * 100;
+            let c = 0;
+            for (let r = 7; r >= 1; r--) {
+                c += RATE[r];
+                if (x <= c)return r
+            }
+            return 1
+        }
+
+        function make(r) {
+            if (r >= 6) {
+                const c = r === 7 ? SECRET[0] : LEGEND[Math.floor(Math.random() * LEGEND.length)];
+                return{rarity: r, isCharacter: true, ch: c}
+            }
+            const L = ITEMS.filter(i => i.r === r);
+            return{rarity: r, item: L[Math.floor(Math.random() * L.length)]}
+        }
+
+        function roll(n) {
+            const res = [];
+            for (let i = 0; i < n; i++)res.push(make(rollRarity()));
+            if (n >= 10)for (let g = 0; g + 10 <= n; g += 10)if (!res.slice(g, g + 10).some(x => x.rarity >= 3))res[g + 9] = make(3);
+            return res
+        }
+
+        function apply(res) {
+            const col = J('collection', []), owned = ownedMap(), chars = J('characters', []);
+            res.forEach(r => {
+                if (r.isCharacter) {
+                    const c = r.ch;
+                    if (chars.find(x => x.id === c.id)) {
+                        tickets += 30;
+                        r.dup = true
+                    } else {
+                        chars.push({
+                            id: c.id,
+                            name: c.name,
+                            level: 1,
+                            exp: 0,
+                            hp: c.hp,
+                            maxHp: c.hp,
+                            attack: c.attack,
+                            defense: c.defense,
+                            kamante: c.kamante,
+                            image: c.image
+                            });
+                        r.isNew = true
+                    }
+                    const gh = J('gachaHistory', []);
+                    gh.push({rarity: r.rarity, name: c.name, timestamp: Date.now()});
+                    localStorage.setItem('gachaHistory', JSON.stringify(gh))
+                }
+                else {
+                    r.isNew = !owned[r.item.id];
+                    owned[r.item.id] = (owned[r.item.id] || 0) + 1;
+                    col.push({
+                        id: Date.now() + Math.random(),
+                        rarity: r.rarity,
+                        itemId: r.item.id,
+                        name: r.item.n,
+                        tk: 1,
+                        isCharacter: false,
+                        obtainedAt: Date.now()
+                        })
+                }
+                });
+            localStorage.setItem('collection', JSON.stringify(col));
+            localStorage.setItem('characters', JSON.stringify(chars));
+            localStorage.setItem('ticketCount', tickets);
+        }
+        // ---- フロー ----
+
+        async function pull(n) {
+            if (busy)return;
+            ensureAudio();
+            if (tickets < n) {
+                floatT('チケットがたりないよ！', innerWidth / 2, innerHeight / 2);
+                return
+            }
+            busy = true;
+            skipAll = false;
+            window.KamanteBGM && KamanteBGM.duck(.3);
+            tickets -= n;
+            localStorage.setItem('ticketCount', tickets);
+            localStorage.setItem('gachaCount', (parseInt(localStorage.getItem('gachaCount')) || 0) + n);
+            const res = roll(n);
+            let f = parseInt(localStorage.getItem('matsuriFulls')) || 0, gg = parseInt(localStorage.getItem('matsuriGauge')) || 0;
+            const k = Math.min(f, n), need = Math.max(0, k - res.filter(r => r.rarity >= 4).length);
+            if (need > 0) {
+                res.map((r, i) => [r.rarity, i]).filter(x => x[0] < 4).sort((a, b) => a[0] - b[0]).slice(0, need).forEach(([, i]) => {
+                    res[i] = make(Math.random() < .3 ? 5 : 4)
+                    });
+                f -= need
+            }
+            gg += n;
+            f += Math.floor(gg / 30);
+            gg %= 30;
+            localStorage.setItem('matsuriFulls', f);
+            localStorage.setItem('matsuriGauge', gg);
+            apply(res);
+            refresh();
+            $('stage').classList.add('on');
+            $('skp').style.display = 'block';
+            await hitPhase(res);
+            if (!skipAll)await capsulePhase(res);
+            await revealPhase(res, n);
+            summary(res, n);
+            busy = false;
+            refresh();
+        }
+        $('skp').addEventListener('click', () => {
+            skipAll = true
+            });
+
+        function hitPhase(res) {
+            return new Promise(done => {
+                const st = $('st');
+                $('rays').classList.remove('on');
+                st.innerHTML = `<div class="tt">🥁 たいこを たたこう！</div><div class="drum" id="sd" style="margin:6px auto"></div><div class="dots"><i></i><i></i><i></i></div><div class="tt2">タップ ×3</div>`;
+                let c = 0, fin = false;
+                const dots = st.querySelectorAll('.dots i'), d = $('sd');
+                const hit = () => {
+                    if (fin)return;
+                    c++;
+                    dots[c - 1].classList.add('on');
+                    sfx.hit(c);
+                    vib(c === 3 ? [40, 30, 80] : 20);
+                    d.classList.remove('hit');
+                    void d.offsetWidth;
+                    d.classList.add('hit');
+                    const r = d.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+                    const rp = document.createElement('div');
+                    rp.className = 'rip';
+                    d.appendChild(rp);
+                    setTimeout(() => rp.remove(), 650);
+                    sparks(cx, cy, 8 + c * 6, ['#ffd54f', '#ff7043', '#fff'], 80 + c * 40);
+                    shake();
+                    if (c === 3) {
+                        fin = true;
+                        sfx.charge();
+                        flash();
+                        setTimeout(done, 700)
+                    }
+                };
+                d.addEventListener('pointerdown', e => {
+                    e.stopPropagation();
+                    hit()
+                    });
+                const auto = () => {
+                    if (fin)return;
+                    hit();
+                    setTimeout(auto, 260)
+                };
+                setTimeout(() => {
+                    if (!fin && c === 0)auto()
+                    }, 6000);
+                const chk = setInterval(() => {
+                    if (skipAll && !fin) {
+                        fin = true;
+                        clearInterval(chk);
+                        done()
+                    }
+                    if (fin)clearInterval(chk)
+                    }, 100);
+                })
+        }
+
+        function capsulePhase(res) {
+            return new Promise(async done => {
+                const mx = Math.max(...res.map(r => r.rarity)), rc = RAR[mx].c;
+                $('stage').style.setProperty('--rc', rc);
+                $('st').innerHTML = `<div class="tt">ポンッ！</div><div class="cap ${mx === 7 ? 'r7' : ''}" id="cap" style="--rc:${rc}"><div class="ct"></div><div class="cb"></div></div><div class="tt2">タップで あける！</div>`;
+                sfx.drop();
+                await wait(900);
+                if (skipAll)return done();
+                if (mx >= 4) {
+                    $('cap').classList.add('wob');
+                    const [x, y] = mid();
+                    sparks(x, y, 14, [rc, '#fff'], 130);
+                    sfx.charge()
+                }
+                await tapOrWait(mx >= 4 ? 3500 : 2500);
+                flash();
+                sfx.open();
+                const [x, y] = mid();
+                sparks(x, y, 26, [rc, '#fff', '#ffd54f'], 220);
+                done()
+                })
+        }
+
+        async function revealPhase(res, n) {
+            const q = (n === 1 ? res : res.filter(r => n <= 10 || r.rarity >= 4)).slice().sort((a, b) => a.rarity - b.rarity);
+            if (n > 10 && !skipAll) {
+                $('st').innerHTML = `<div class="tt">🎊 ${n}こ ゲット！</div>`;
+                await wait(900)
+            }
+            for (const r of q) {
+                if (skipAll)break;
+                await showCard(r, n === 1 || r.rarity >= 5)
+            }
+            $('rays').classList.remove('on');
+        }
+
+        async function showCard(r, hold) {
+            const R = RAR[r.rarity], stg = $('stage');
+            stg.style.setProperty('--rc', R.c);
+            if (r.rarity >= 6) {
+                $('st').innerHTML = `<div class="banner" style="--rc:${R.c}">${r.rarity === 7 ? '🌈 シークレット！！' : '👑 レジェンド！'}</div>`;
+                $('rays').classList.add('on');
+                flash();
+                shake();
+                sfx.rar(r.rarity);
+                vib([80, 40, 80, 40, 160]);
+                await wait(1300);
+                if (skipAll)return
+            }
+            if (r.rarity >= 4 && !skipAll) {
+                $('st').innerHTML = `<div class="card back" style="--rc:${R.c}"><div class="em">❓</div><div class="nm">？？？</div></div>`;
+                sfx.roll();
+                vib([20, 20, 20, 20, 20, 20]);
+                await wait(r.rarity >= 6 ? 1000 : 700);
+                flash()
+            }
+            const c = r.isCharacter ? r.ch : r.item, em = c.e, name = r.isCharacter ? c.name : c.n;
+            const vis = r.isCharacter ? `<img src="illust/chars/char${c.id}.svg" alt="" data-old="${c.image}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src=this.dataset.old}else{this.outerHTML='<div class=&quot;em&quot;>${em}</div>'}">` : `<img class="ico" src="illust/items/${c.id}.svg" alt="" onerror="this.outerHTML='<div class=&quot;em&quot;>${em}</div>'">`;
+            const tags = (r.isNew ? '<span class="tg">✨ NEW!</span>' : '') + (r.dup ? '<span class="tg c">2回目 → 🎫30まい！</span>' : '') + (r.isCharacter ? '<span class="tg c">なかま</span>' : '');
+            $('st').innerHTML = `<div class="card r${r.rarity}" style="--rc:${R.c}">${vis}<div class="nm">${name}</div><div class="stz">${R.s}</div><div class="rn">${R.n}${r.item ? ' ・ ' + CATS[r.item.c] : ''}</div><div>${tags}</div>${(hold || r.rarity >= 3) && r.item ? `<div class="tr">${r.item.t}</div>` : ''}${hold ? '<div class="tt2" style="font-size:14px;margin-top:8px">タップでつぎへ</div>' : ''}</div>`;
+            if (r.rarity < 6)sfx.rar(r.rarity);
+            const [x, y] = mid();
+            sparks(x, y, r.rarity * 6, [R.c, '#fff', '#ffd54f'], 100 + r.rarity * 30);
+            if (r.rarity >= 5) {
+                $('rays').classList.add('on');
+                flash();
+                shake();
+                confetti(r.rarity >= 6 ? 60 : 25);
+                vib(120)
+            } else vib(15);
+            await tapOrWait(hold ? 0 : [0, 350, 450, 800, 1300][r.rarity] || 1000);
+        }
+
+        function summary(res, n) {
+            window.KamanteBGM && KamanteBGM.duck(1);
+            $('rays').classList.remove('on');
+            $('skp').style.display = 'none';
+            const g = {};
+            res.forEach(r => {
+                const k = r.isCharacter ? 'c' + r.ch.id : r.item.id;
+                if (!g[k])g[k] = {
+                    r: r.rarity,
+                    e: r.isCharacter ? r.ch.e : r.item.e,
+                    n: r.isCharacter ? r.ch.name : r.item.n,
+                    c: 0,
+                    nw: false,
+                    ch: r.isCharacter,
+                    id: r.isCharacter ? r.ch.id : r.item.id
+                };
+                g[k].c++;
+                if (r.isNew)g[k].nw = true
+                });
+            const list = Object.values(g).sort((a, b) => b.r - a.r), newN = list.filter(x => x.nw).length;
+            $('st').innerHTML = `<div class="tt">けっか</div><div style="font-size:17px">${n}こ ゲット ・ ✨ あたらしい ${newN}しゅるい</div><div class="sg">${list.map((x, i) => `<div class="sc" style="--rc:${RAR[x.r].c};animation-delay:${Math.min(i * 40, 800)}ms">${x.nw ? '<span class="nw">NEW</span>' : ''}<div class="e"><img class="si" src="illust/${x.ch ? 'chars/char' : 'items/'}${x.id}.svg" alt="" onerror="this.outerHTML='${x.e}'"></div><div class="n">${x.n}</div><div class="x">${RAR[x.r].s}${x.c > 1 ? ' ×' + x.c : ''}</div></div>`).join('')}</div>
+  <div class="row"><button class="btn" id="again">もういちど</button><a class="btn g" href="collection.html">📚 図鑑</a><button class="btn g" id="closeS">とじる</button></div>`;
+            $('again').onclick = () => {
+                $('stage').classList.remove('on');
+                pull(n)
+            };
+            $('closeS').onclick = () => $('stage').classList.remove('on');
+            const mx = Math.max(...res.map(r => r.rarity));
+            if (mx >= 4)confetti(30);
+        }
+
+        function gaugeUI() {
+            const g = parseInt(localStorage.getItem('matsuriGauge')) || 0, f = parseInt(localStorage.getItem('matsuriFulls')) || 0;
+            $('gt').textContent = g + '/30';
+            $('gf').style.width = g / 30 * 100 + '%';
+            $('gn').textContent = f ? `⭐ ★4いじょう確定チャンス ×${f}！ つぎの福引でゲット！` : '30回ひくと、★4いじょうが1こ確定！';
+            $('gz').classList.toggle('full', f > 0)
+        }
+
+        function refresh() {
+            gaugeUI();
+            $('tkn').textContent = tickets;
+            [1, 10].forEach(n => $('b' + n).disabled = tickets < n);
+            const o = ownedMap();
+            $('zk').textContent = Object.keys(o).length;
+            $('zn').textContent = ITEMS.length
+        }
+        // ---- 起動 ----
+        (function init() {
+            const rf = migrateOld();
+            if (rf) {
+                tickets = parseInt(localStorage.getItem('ticketCount')) || 0;
+                setTimeout(() => floatT('古い景品を🎫' + rf + 'まいに交換したよ', innerWidth / 2, innerHeight / 3), 500)
+            }
+            const sky = $('sky');
+            for (let i = 0; i < 46; i++) {
+                const s = document.createElement('i');
+                s.className = 'star';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.top = Math.random() * 80 + '%';
+                s.style.animationDelay = Math.random() * 3 + 's';
+                sky.appendChild(s)
+            }
+            $('rates').innerHTML = [7, 6, 5, 4, 3, 2, 1].map(r => `<div class="rr"><span style="color:${RAR[r].c}">${RAR[r].s} ${RAR[r].n}${r >= 6 ? '(なかま)' : ''}</span><span>${RATE[r]}%</span></div>`).join('') + '<div style="margin-top:6px;opacity:.85">10れんは、★3いじょうが1こ確定します。なかまがダブると🎫30まいに交換されます。</div>';
+            const d = $('mainDrum');
+            d.onpointerdown = () => {
+                ensureAudio();
+                don(rnd(.9, 1.2));
+                d.classList.remove('hit');
+                void d.offsetWidth;
+                d.classList.add('hit');
+                const r = d.getBoundingClientRect();
+                floatT(['ドン！', 'ドドン！', 'ソレ！', 'ヨイショ！'][Math.floor(rnd(0, 4))], r.left + r.width / 2, r.top);
+                sparks(r.left + r.width / 2, r.top + r.height / 2, 8, ['#ffd54f', '#ff7043'], 90)
+            };
+            for (let i = 0; i < 10; i++) {
+                const p = document.createElement('i');
+                p.className = 'petal';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (9 + Math.random() * 8) + 's';
+                p.style.animationDelay = (-Math.random() * 12) + 's';
+                sky.appendChild(p)
+            }
+            refresh();
+            })();
+    </script>
+    <script src="kamante-bgm.js" data-bottom="16px"></script>
+</body>
+</html>
